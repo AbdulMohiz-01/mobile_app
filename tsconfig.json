@@ -1,0 +1,12 @@
+{
+  "compilerOptions": {},
+  "extends": "expo/tsconfig.base",
+  "paths": {
+    "@navigation/*": ["navigation/*"],
+    "@screens/*": ["screens/*"],
+    "@components/*": ["components/*"],
+    "@services/*": ["services/*"],
+    "@utils/*": ["utils/*"],
+    "@constants/*": ["constants/*"]
+  }
+}
