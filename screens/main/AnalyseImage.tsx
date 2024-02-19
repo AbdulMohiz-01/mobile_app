@@ -1,7 +1,7 @@
 import React from "react";
 import { Text } from "react-native";
 
-const AnalyseImage = () => {
+const AnalyseImage: React.FC = () => {
   return <Text>Analyse image</Text>;
 };
 

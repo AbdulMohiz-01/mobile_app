@@ -6,15 +6,26 @@ import {
   StyleSheet,
   TouchableOpacity,
 } from "react-native";
-
 import { navigate } from "../../navigation/NavigationService";
+import { Login, invalidLoginAlert } from "../../service/screens/loginService";
 
-// import { Button } from "../../components";
 
-const LoginScreen = ({ navigation }) => {
-  const handleLogin = () => {
+const LoginScreen : React.FC = () => {
+
+  const [data, setData] = React.useState({
+    email: "",
+    password: "",
+  });
+
+  const handleLogin = async () => {
     // Handle login logic
-    navigation.navigate("MainStack");
+    let isAuth = await Login(data.email, data.password);
+    if (isAuth){
+      navigate("MainStack", {});
+    }
+    else{
+      invalidLoginAlert();
+    }
   };
 
   const handleForgotPassword = () => {
@@ -34,6 +45,8 @@ const LoginScreen = ({ navigation }) => {
           style={styles.inputText}
           placeholder="Email"
           placeholderTextColor="#666"
+          onChangeText={(val) => setData({ ...data, email: val })}
+          value={data.email}
         />
       </View>
 
@@ -43,6 +56,8 @@ const LoginScreen = ({ navigation }) => {
           style={styles.inputText}
           placeholder="Password"
           placeholderTextColor="#666"
+          onChangeText={(val) => setData({ ...data, password: val })}
+          value={data.password}
         />
       </View>
 

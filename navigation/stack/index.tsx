@@ -3,11 +3,17 @@ import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import AuthStack from "./AuthStack"; // Import your AuthStack component
 import MainStack from "./MainStack"; // Import your MainStack component
 
-const Stack = createNativeStackNavigator();
+// Define the type for the root stack param list
+type RootStackParamList = {
+  AuthStack: undefined;
+  MainStack: undefined;
+};
 
-const RootStack = () => {
+const Stack = createNativeStackNavigator<RootStackParamList>(); // Specify the type of the stack navigator
+
+const RootStack: React.FC = () => {
   return (
-    <Stack.Navigator headerMode="none">
+    <Stack.Navigator>
       <Stack.Screen
         name="AuthStack"
         component={AuthStack}
