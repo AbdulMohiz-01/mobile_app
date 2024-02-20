@@ -1,7 +1,7 @@
 import React from "react";
 import { Text } from "react-native";
 
-const Signup = () => {
+const Signup: React.FC = () => {
   return <Text>Signup</Text>;
 };
 

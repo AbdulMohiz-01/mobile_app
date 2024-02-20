@@ -3,9 +3,15 @@ import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import LoginScreen from "../../screens/auth/Login";
 import SignupScreen from "../../screens/auth/Signup";
 
-const Stack = createNativeStackNavigator();
+// Define the type for the auth stack param list
+type AuthStackParamList = {
+  Login: undefined;
+  Signup: undefined;
+};
 
-const AuthStack = () => {
+const Stack = createNativeStackNavigator<AuthStackParamList>(); // Specify the type of the stack navigator
+
+const AuthStack: React.FC = () => {
   return (
     <Stack.Navigator>
       <Stack.Screen
