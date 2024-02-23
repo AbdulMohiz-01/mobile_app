@@ -7,7 +7,8 @@ import {
   TouchableOpacity,
 } from "react-native";
 import { navigate } from "../../navigation/NavigationService";
-import { Login, invalidLoginAlert } from "../../service/screens/loginService";
+// import { Login, invalidLoginAlert } from "../../service/screens/loginService";
+import { Login, invalidLoginAlert } from "service/screens/loginService";
 
 
 const LoginScreen : React.FC = () => {

@@ -1,12 +1,28 @@
 {
-  "compilerOptions": {},
-  "extends": "expo/tsconfig.base",
-  "paths": {
-    "@navigation/*": ["navigation/*"],
-    "@screens/*": ["screens/*"],
-    "@components/*": ["components/*"],
-    "@services/*": ["services/*"],
-    "@utils/*": ["utils/*"],
-    "@constants/*": ["constants/*"]
-  }
+  "compilerOptions": {
+    "baseUrl": ".",
+    "jsx": "react",
+    "esModuleInterop": true,
+    "paths": {
+      "@navigation/*": [
+        "navigation/*"
+      ],
+      "@screens/*": [
+        "screens/*"
+      ],
+      "@components/*": [
+        "components/*"
+      ],
+      "@services/*": [
+        "services/*"
+      ],
+      "model/*": [
+        "model/*"
+      ],  
+    }
+  },
+  "exclude": [
+    "node_modules"
+  ],
+  "extends": "expo/tsconfig.base"
 }
