@@ -1,6 +1,6 @@
 import React from "react";
 import { Text, View, TouchableOpacity } from "react-native";
-import { navigate } from "../../navigation/NavigationService";
+import { navigate } from "navigation/NavigationService";
 
 const Dashboard : React.FC = () => {
   return (

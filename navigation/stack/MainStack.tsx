@@ -1,8 +1,8 @@
 import React from "react";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
-import HomeScreen from "../../screens/main/Home";
-import AnalyseImage from "../../screens/main/AnalyseImage";
-import Dashboard from "../../screens/main/Dashboard";
+import HomeScreen from "screens/main/Home";
+import AnalyseImage from "screens/main/AnalyseImage";
+import Dashboard from "screens/main/Dashboard";
 
 // Define the type for the root stack param list
 type RootStackParamList = {

@@ -2,14 +2,13 @@ import React from "react";
 import {
   View,
   Text,
-  TextInput,
   StyleSheet,
   TouchableOpacity,
 } from "react-native";
-import { navigate } from "../../navigation/NavigationService";
-// import { Login, invalidLoginAlert } from "../../service/screens/loginService";
+import { navigate } from "navigation/NavigationService";
 import { Login, invalidLoginAlert } from "service/screens/loginService";
-
+import { PrimaryButton, Input, IconButton } from "component";
+import { theme } from "constants/theme";
 
 const LoginScreen : React.FC = () => {
 
@@ -39,36 +38,53 @@ const LoginScreen : React.FC = () => {
 
   return (
     <View style={styles.container}>
-      <Text style={styles.logo}>Retinopathy</Text>
-
-      <View style={styles.inputView}>
-        <TextInput
-          style={styles.inputText}
-          placeholder="Email"
-          placeholderTextColor="#666"
-          onChangeText={(val) => setData({ ...data, email: val })}
-          value={data.email}
+      <Text style={styles.welcome}>Welcome</Text>
+      <Input
+        value={data.email}
+        onChangeText={(value) => setData({ ...data, email: value })}
+        placeholder="Enter your email"
+        beforeIcon="email"
+      />
+      <Input
+        value={data.password}
+        onChangeText={(value) => setData({ ...data, password: value })}
+        placeholder="Enter your password"
+        secureTextEntry={true}
+        beforeIcon="password"
+        afterIcon="eye"
         />
-      </View>
 
-      <View style={styles.inputView}>
-        <TextInput
-          secureTextEntry
-          style={styles.inputText}
-          placeholder="Password"
-          placeholderTextColor="#666"
-          onChangeText={(val) => setData({ ...data, password: val })}
-          value={data.password}
-        />
-      </View>
-
-      <TouchableOpacity style={styles.loginBtn} onPress={handleLogin}>
-        <Text style={styles.loginText}>LOGIN</Text>
+        {/* forget password */}
+      <TouchableOpacity onPress={handleForgotPassword} style={styles.forgotContainer}>
+        <Text style={styles.forgot}>Forgot Password?</Text>
       </TouchableOpacity>
 
-      <TouchableOpacity style={styles.googleBtn} onPress={handleGoogleLogin}>
-        <Text style={styles.googleText}>Login with Google</Text>
+      <PrimaryButton text="Login" onClick={handleLogin} width={null} />
+
+      {/* dont have an account sign up */}
+      <View style={styles.signUpContainer}>
+        <Text>
+        Don't have an account?
+        </Text>
+        <TouchableOpacity onPress={() => navigate("SignUp", {})}>
+        <Text style={styles.signUpLink}>Sign Up</Text>
       </TouchableOpacity>
+      </View>
+     
+      
+        <View>
+          <Text style={styles.or}>OR</Text>
+        </View>
+       
+
+     <IconButton
+        text="Login with Google"
+        backgroundColor="white"
+        icon="google"
+        textColor="black"
+        onClick={handleGoogleLogin}
+        width={null}
+      />
     </View>
   );
 };
@@ -77,10 +93,10 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     alignItems: "center",
-    justifyContent: "center",
+    // justifyContent: "center",
     backgroundColor: "#fff",
   },
-  logo: {
+  welcome: {
     fontWeight: "bold",
     fontSize: 50,
     color: "#333",
@@ -99,9 +115,26 @@ const styles = StyleSheet.create({
     height: 50,
     color: "#333",
   },
+  forgotContainer: {
+    width: "80%",
+    alignItems: "flex-end",
+    marginBottom: 20,
+  },
   forgot: {
-    color: "#666",
+    color: theme.primary_color,
     fontSize: 12,
+  },
+  signUpContainer: {
+    width: "80%",
+    display: "flex",
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
+    marginBottom: 20,
+  },
+  signUpLink: {
+    color: theme.primary_color,
+    marginLeft: 5,
   },
   loginBtn: {
     width: "80%",
@@ -117,6 +150,12 @@ const styles = StyleSheet.create({
     color: "#fff",
     fontWeight: "bold",
   },
+  or: {
+    color: "#a0a7b0",
+    marginTop: 10,
+    marginBottom: 10,
+    fontSize: 12,
+  },
   googleBtn: {
     width: "80%",
     backgroundColor: "#4285f4",
@@ -130,6 +169,7 @@ const styles = StyleSheet.create({
     color: "#fff",
     fontWeight: "bold",
   },
+
 });
 
 export default LoginScreen;
