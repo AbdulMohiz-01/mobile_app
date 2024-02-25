@@ -9,21 +9,28 @@ import { navigate } from "navigation/NavigationService";
 import { Login, invalidLoginAlert } from "service/screens/loginService";
 import { PrimaryButton, Input, IconButton } from "component";
 import { theme } from "constants/theme";
+import { Response } from "model/response";
+import { Role } from "model/role";
 
-const LoginScreen : React.FC = () => {
+
+const LoginScreen: React.FC = () => {
 
   const [data, setData] = React.useState({
     email: "",
     password: "",
   });
 
+  const [showPassword, setShowPassword] = React.useState(true);
+
+  const toggleSecureTextEntry = () => {
+    setShowPassword(!showPassword);
+  }
+
   const handleLogin = async () => {
-    // Handle login logic
-    let isAuth = await Login(data.email, data.password);
-    if (isAuth){
+    let response: Response = await Login(data.email, data.password);
+    if (response.status && response.data.role === Role.User) {
       navigate("MainStack", {});
-    }
-    else{
+    } else {
       invalidLoginAlert();
     }
   };
@@ -39,22 +46,27 @@ const LoginScreen : React.FC = () => {
   return (
     <View style={styles.container}>
       <Text style={styles.welcome}>Welcome</Text>
-      <Input
-        value={data.email}
-        onChangeText={(value) => setData({ ...data, email: value })}
-        placeholder="Enter your email"
-        beforeIcon="email"
-      />
-      <Input
-        value={data.password}
-        onChangeText={(value) => setData({ ...data, password: value })}
-        placeholder="Enter your password"
-        secureTextEntry={true}
-        beforeIcon="password"
-        afterIcon="eye"
+      <View style={styles.inputView}>
+        <Input
+          value={data.email}
+          onChangeText={(value) => setData({ ...data, email: value })}
+          placeholder="Enter your email"
+          beforeIcon="email"
         />
+      </View>
+      <View style={styles.inputView}>
+        <Input
+          value={data.password}
+          onChangeText={(value) => setData({ ...data, password: value })}
+          placeholder="Enter your password"
+          secureTextEntry={showPassword}
+          beforeIcon="password"
+          afterIcon="eye"
+          toggleSecureTextEntry={toggleSecureTextEntry}
+        />
+      </View>
 
-        {/* forget password */}
+      {/* forget password */}
       <TouchableOpacity onPress={handleForgotPassword} style={styles.forgotContainer}>
         <Text style={styles.forgot}>Forgot Password?</Text>
       </TouchableOpacity>
@@ -64,20 +76,20 @@ const LoginScreen : React.FC = () => {
       {/* dont have an account sign up */}
       <View style={styles.signUpContainer}>
         <Text>
-        Don't have an account?
+          Don't have an account?
         </Text>
-        <TouchableOpacity onPress={() => navigate("SignUp", {})}>
-        <Text style={styles.signUpLink}>Sign Up</Text>
-      </TouchableOpacity>
+        <TouchableOpacity onPress={() => navigate("Signup", {})}>
+          <Text style={styles.signUpLink}>Sign Up</Text>
+        </TouchableOpacity>
       </View>
-     
-      
-        <View>
-          <Text style={styles.or}>OR</Text>
-        </View>
-       
 
-     <IconButton
+
+      <View>
+        <Text style={styles.or}>OR</Text>
+      </View>
+
+
+      <IconButton
         text="Login with Google"
         backgroundColor="white"
         icon="google"
@@ -103,13 +115,7 @@ const styles = StyleSheet.create({
     marginBottom: 40,
   },
   inputView: {
-    width: "80%",
-    backgroundColor: "#f2f2f2",
-    borderRadius: 25,
-    height: 50,
-    marginBottom: 20,
-    justifyContent: "center",
-    padding: 20,
+    marginTop: 10,
   },
   inputText: {
     height: 50,

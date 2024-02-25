@@ -1,9 +1,7 @@
-import { Role } from "react-native";
+import { Role } from "./role";
 
 export interface User {
-    id: string;
-    firstName: string;
-    lastName: string;
+    name: string;
     email: string;
     password: string;
     createdAt: string;

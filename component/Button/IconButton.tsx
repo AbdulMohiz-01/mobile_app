@@ -2,10 +2,8 @@ import React from "react";
 import { Text, View, TouchableOpacity, StyleSheet, Image } from "react-native";
 import { useColorScheme } from "react-native";
 import { theme } from "constants/theme";
+import { icons } from "constants/paths";
 
-const iconMapping: { [key: string]: any } = {
-    google: require('assets/icons/google.png'),
-};
 
 const IconButton = ({
   text,
@@ -27,11 +25,14 @@ const IconButton = ({
       ]}
     >
       {icon && (
-        <Image source={iconMapping[icon]} style={styles.buttonIcon} />
+        <Image source={icons[icon]} style={styles.buttonIcon} />
       )}
-      <Text style={[styles.buttonText, { color: textColor || colors.primary_text }]}>
-        {text}
-      </Text>
+      {
+        text &&
+        <Text style={[styles.buttonText, { color: textColor || colors.primary_text }]}>
+          {text}
+        </Text>
+      }
     </TouchableOpacity>
   );
 };
@@ -46,7 +47,7 @@ const styles = StyleSheet.create({
     marginVertical: 5,
     borderRadius: 9999,
     borderWidth: 1,
-    borderColor: theme.primary_color,
+    borderColor: theme.google_button_border_color,
   },
   buttonText: {
     fontSize: 18,

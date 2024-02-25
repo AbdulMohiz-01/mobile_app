@@ -22,11 +22,15 @@ export const retrieveAllDocuments = async (collectionName: string) => {
 };
 
 export const addDocument = async (collectionName: string, data: object) => {
+
   try {
+    console.log(data, "this is data inside the addDocument function")
     const docRef = await addDoc(collection(db, collectionName), data);
-    console.log('Document written with ID: ', docRef.id);
+    if (docRef.id) {
+      return true;
+    }
   } catch (error) {
-    console.error('Error adding document:', error);
+    return false;
   }
 };
 
@@ -46,12 +50,13 @@ export const findByEmail = async (collectionName: string, email: string) => {
     querySnapshot.forEach((doc) => {
       if (doc.data().email === email) {
         user = doc.data();
+        return user;
       }
     });
-
-    return user;
   } catch (error) {
     console.error('Error finding user by email:', error);
     return null;
   }
+
+  return null;
 }

@@ -1,5 +1,6 @@
 import React from 'react';
-import { View, TextInput as RNTextInput, Image, StyleSheet } from 'react-native';
+import { View, TextInput as RNTextInput, Image, StyleSheet, TouchableOpacity } from 'react-native';
+import { icons } from 'constants/paths';
 
 interface TextInputProps {
     beforeIcon?: string;
@@ -8,35 +9,31 @@ interface TextInputProps {
     placeholder?: string;
     secureTextEntry?: boolean;
     afterIcon?: string;
+    isPassword?: boolean;
+    isValid?: boolean;
+    toggleSecureTextEntry?: () => void;
+    onBlur?: () => void;
 }
 
-const iconMapping: { [key: string]: any } = {
-    email: require('assets/icons/email.png'),
-    emailTyping: require('assets/icons/email-typing.png'),
-    password: require('assets/icons/password.png'),
-    passwordTyping: require('assets/icons/password-typing.png'),
-    eye: require('assets/icons/icon-eye-slash.png'),
-};
-
-const TextInput: React.FC<TextInputProps> = ({ value, onChangeText, placeholder, secureTextEntry, beforeIcon, afterIcon }) => {
-
+const TextInput: React.FC<TextInputProps> = ({ value, onChangeText, placeholder, secureTextEntry, beforeIcon, afterIcon, isValid, isPassword, toggleSecureTextEntry, onBlur }) => {
     return (
-        <View style={styles.inputContainer}>
-            {beforeIcon && value && iconMapping[beforeIcon] && (
-                <Image source={iconMapping[beforeIcon + "Typing"]} style={styles.iconLeft} />
-            )}
-            {beforeIcon && !value && iconMapping[beforeIcon] && (
-                <Image source={iconMapping[beforeIcon]} style={styles.iconLeft} />
-            )}
+        <View style={[styles.inputContainer]}>
+            {beforeIcon && value && isValid && icons[beforeIcon] ? (
+                <Image source={icons[beforeIcon + "Typing"]} style={styles.iconLeft} />
+            ) : beforeIcon && icons[beforeIcon] && <Image source={icons[beforeIcon]} style={styles.iconLeft} />
+            }
             <RNTextInput
                 style={styles.inputText}
                 value={value}
                 onChangeText={onChangeText}
                 placeholder={placeholder}
                 secureTextEntry={secureTextEntry}
+                onBlur={onBlur}
             />
-            {afterIcon && iconMapping[afterIcon] && (
-                <Image source={iconMapping[afterIcon]} style={styles.iconRight} />
+            {afterIcon && isPassword && icons[afterIcon] && (
+                <TouchableOpacity onPress={toggleSecureTextEntry}>
+                    <Image source={icons[afterIcon]} style={styles.iconRight} />
+                </TouchableOpacity>
             )}
         </View>
     );
@@ -52,7 +49,6 @@ const styles = StyleSheet.create({
         borderWidth: 1,
         borderRadius: 20,
         height: 60,
-        marginBottom: 20,
         justifyContent: "center",
         padding: 20,
     },
