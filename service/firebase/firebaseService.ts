@@ -50,7 +50,6 @@ export const findByEmail = async (collectionName: string, email: string) => {
     querySnapshot.forEach((doc) => {
       if (doc.data().email === email) {
         user = doc.data();
-        console.log('User found:', user); 
         return user;
       }
     });

@@ -7,7 +7,7 @@ import {
 } from "react-native";
 import { navigate } from "navigation/NavigationService";
 import { Login, invalidLoginAlert } from "service/screens/loginService";
-import { PrimaryButton, Input, IconButton } from "component";
+import { PrimaryButton, Input, IconButton, Modal } from "component";
 import { theme } from "constants/theme";
 import { Response } from "model/response";
 import { Role } from "model/role";
@@ -32,7 +32,10 @@ const LoginScreen: React.FC = () => {
     }
     let response: Response = await Login(data.email, data.password);
     if (response.status && response.data.role === Role.User) {
-      navigate("MainStack", {});
+      
+      <Modal text="Login Successfully" oktext="ok" dismisstext="Dismiss" okClick={() => false} dismissClick={() =>false } width={null}/>
+      console.log("Login Successfully")
+      //navigate("MainStack", {});
     } else {
       invalidLoginAlert();
     }
