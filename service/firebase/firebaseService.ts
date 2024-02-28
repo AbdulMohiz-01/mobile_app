@@ -46,10 +46,11 @@ export const updateDocument = async (collectionName: string, docId: string, data
 export const findByEmail = async (collectionName: string, email: string) => {
   try {
     const querySnapshot = await getDocs(collection(db, collectionName));
-    let user: any = null;
+    var user: any = null;
     querySnapshot.forEach((doc) => {
       if (doc.data().email === email) {
         user = doc.data();
+        console.log('User found:', user); 
         return user;
       }
     });
@@ -57,6 +58,5 @@ export const findByEmail = async (collectionName: string, email: string) => {
     console.error('Error finding user by email:', error);
     return null;
   }
-
-  return null;
+  return user;
 }

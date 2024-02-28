@@ -27,6 +27,9 @@ const LoginScreen: React.FC = () => {
   }
 
   const handleLogin = async () => {
+    if (!data.email || !data.password) {
+      return;
+    }
     let response: Response = await Login(data.email, data.password);
     if (response.status && response.data.role === Role.User) {
       navigate("MainStack", {});
