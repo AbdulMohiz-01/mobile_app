@@ -1,8 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { View, Text, StyleSheet, TouchableOpacity } from "react-native";
 import { navigate } from "navigation/NavigationService";
-// import { createUser } from "service/screens/signupService";
-import { PrimaryButton, Input, LineLoading } from "component";
+import { PrimaryButton, Input, ErrorModal } from "component";
 import { theme } from "constants/theme";
 import { FormData } from "model/signupForm";
 import { createUser } from "service/screens/signupService";
@@ -15,10 +14,10 @@ const SignupScreen: React.FC = () => {
     password: "",
     confirmPassword: "",
   });
-  const [loading, setLoading] = useState(false);
-  const [showModal, setShowModal] = useState(false);
   const [errors, setErrors] = useState<Partial<FormData>>({});
   const [showPassword, setShowPassword] = useState(true);
+  const [buttonText, setButtonText] = useState("Sign Up");
+  const [showModal, setShowModal] = useState(false);
 
   useEffect(() => {
     validateField("name", formData.name);
@@ -81,14 +80,15 @@ const SignupScreen: React.FC = () => {
   const handleSignup = async () => {
     if (Object.keys(errors).length === 0) {
       // Perform signup logic
-      setLoading(true);
+      setButtonText("Signing Up...");
       const response: Response = await createUser(formData);
       if (response.status) {
         navigate("Login", {});
       } else {
         // Handle error
+        setButtonText("Sign Up");
+        setShowModal(true);
       }
-      setLoading(false);
     }
   };
 
@@ -143,15 +143,14 @@ const SignupScreen: React.FC = () => {
         {errors.confirmPassword ? <Text style={styles.error}>{errors.confirmPassword}</Text> : null}
       </View>
 
-      <PrimaryButton text="Sign Up" onClick={handleSignup} width={null} />
+      <PrimaryButton text={buttonText} onClick={handleSignup} width={null} disable={buttonText == "Sign Up" ? false : true} />
       <TouchableOpacity onPress={() => navigate("Login", {})}>
         <Text style={styles.link}>Already have an account? Login</Text>
       </TouchableOpacity>
 
       {
-        loading && <LineLoading />
+        !showModal && <ErrorModal text={"Signup failed"} dismissText={"OK"} onDismiss={() => setShowModal(false)} />
       }
-
     </View>
   );
 };

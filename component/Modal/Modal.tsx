@@ -1,13 +1,10 @@
 import React, { useState } from "react";
 import { Alert, Modal as RNModal, Text, View, TouchableOpacity, StyleSheet } from "react-native";
 
-const Modal = ({
+const ErrorModal = ({
   text,
-  oktext,
-  dismisstext,
-  okClick,
-  dismissClick,
-  width
+  dismissText = "Dismiss",
+  onDismiss = () => { },
 }) => {
   const [modalVisible, setModalVisible] = useState(true);
   return (
@@ -19,14 +16,18 @@ const Modal = ({
         onRequestClose={() => {
           Alert.alert('Modal has been closed.');
           setModalVisible(!modalVisible);
+          onDismiss();
         }}>
         <View style={styles.centeredView}>
           <View style={styles.modalView}>
-            <Text>{text}</Text>
+            <Text style={styles.modalText}>{text}</Text>
             <TouchableOpacity
-              style={styles.okButton}
-              onPress={okClick}>
-              <Text style={styles.textStyle}>{oktext}</Text>
+              style={styles.dismissButton}
+              onPress={() => {
+                setModalVisible(!modalVisible);
+                onDismiss();
+              }}>
+              <Text style={styles.dismissButtonText}>{dismissText}</Text>
             </TouchableOpacity>
           </View>
         </View>
@@ -40,13 +41,13 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    marginTop: 22,
+    backgroundColor: 'rgba(0, 0, 0, 0.5)',
   },
   modalView: {
     margin: 20,
-    backgroundColor: 'white',
+    backgroundColor: '#FFFFFF',
     borderRadius: 20,
-    padding: 35,
+    padding: 20,
     alignItems: 'center',
     shadowColor: '#000',
     shadowOffset: {
@@ -57,31 +58,25 @@ const styles = StyleSheet.create({
     shadowRadius: 4,
     elevation: 5,
   },
-  button: {
-    borderRadius: 20,
-    padding: 10,
+  modalText: {
+    marginBottom: 20,
+    textAlign: 'center',
+    fontSize: 18,
+    color: '#199a8e',
+  },
+  dismissButton: {
+    backgroundColor: '#199a8e',
+    borderRadius: 25,
+    paddingVertical: 12,
+    paddingHorizontal: 30,
     elevation: 2,
   },
-  buttonOpen: {
-    backgroundColor: '#F194FF',
-  },
-  buttonClose: {
-    backgroundColor: '#2196F3',
-  },
-  textStyle: {
+  dismissButtonText: {
+    fontSize: 16,
     color: 'white',
     fontWeight: 'bold',
     textAlign: 'center',
   },
-  modalText: {
-    marginBottom: 15,
-    textAlign: 'center',
-  },
-  okButton: {
-    backgroundColor: 'green',
-    borderRadius: 20,
-    padding: 10,
-    elevation: 2,
-  },
 });
-export default Modal;
+
+export default ErrorModal;

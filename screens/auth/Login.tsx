@@ -7,11 +7,10 @@ import {
 } from "react-native";
 import { navigate } from "navigation/NavigationService";
 import { Login, invalidLoginAlert } from "service/screens/loginService";
-import { PrimaryButton, Input, IconButton, Modal, LineLoading } from "component";
+import { PrimaryButton, Input, IconButton, LineLoading } from "component";
 import { theme } from "constants/theme";
 import { Response } from "model/response";
 import { Role } from "model/role";
-
 
 const LoginScreen: React.FC = () => {
   const [data, setData] = React.useState({
@@ -42,8 +41,13 @@ const LoginScreen: React.FC = () => {
     // Handle forgot password logic
   };
 
-  const handleGoogleLogin = () => {
-    // Handle login with Google logic
+  const handleGoogleLogin = async () => {
+    // Handle google login logic
+    // await signInWithPopup(auth, provider)
+    //   .then((result) => {
+    //     const user = result.user;
+    //     console.log(user);
+    //   })
   };
 
   return (

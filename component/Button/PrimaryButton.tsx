@@ -5,13 +5,15 @@ import { theme } from "constants/theme";
 const PrimaryButton = ({
   text,
   onClick,
-  width
+  width,
+  disable = false,
 }) => {
-  
+
   return (
     <TouchableOpacity
       onPress={onClick}
       style={[styles.button, { width: width ? width : "80%" }]}
+      disabled={disable}
     >
       <Text style={styles.buttonText}>{text}</Text>
     </TouchableOpacity>
