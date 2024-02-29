@@ -7,19 +7,18 @@ import {
 } from "react-native";
 import { navigate } from "navigation/NavigationService";
 import { Login, invalidLoginAlert } from "service/screens/loginService";
-import { PrimaryButton, Input, IconButton, Modal } from "component";
+import { PrimaryButton, Input, IconButton, Modal, LineLoading } from "component";
 import { theme } from "constants/theme";
 import { Response } from "model/response";
 import { Role } from "model/role";
 
 
 const LoginScreen: React.FC = () => {
-
   const [data, setData] = React.useState({
     email: "",
     password: "",
   });
-
+  const [modalVisible, setModalVisible] = React.useState(false);
   const [showPassword, setShowPassword] = React.useState(true);
 
   const toggleSecureTextEntry = () => {
@@ -32,9 +31,7 @@ const LoginScreen: React.FC = () => {
     }
     let response: Response = await Login(data.email, data.password);
     if (response.status && response.data.role === Role.User) {
-      
-      <Modal text="Login Successfully" oktext="ok" dismisstext="Dismiss" okClick={() => false} dismissClick={() =>false } width={null}/>
-      console.log("Login Successfully")
+      setModalVisible(true);
       //navigate("MainStack", {});
     } else {
       invalidLoginAlert();
@@ -71,14 +68,11 @@ const LoginScreen: React.FC = () => {
           toggleSecureTextEntry={toggleSecureTextEntry}
         />
       </View>
-
       {/* forget password */}
       <TouchableOpacity onPress={handleForgotPassword} style={styles.forgotContainer}>
         <Text style={styles.forgot}>Forgot Password?</Text>
       </TouchableOpacity>
-
       <PrimaryButton text="Login" onClick={handleLogin} width={null} />
-
       {/* dont have an account sign up */}
       <View style={styles.signUpContainer}>
         <Text>
@@ -88,13 +82,9 @@ const LoginScreen: React.FC = () => {
           <Text style={styles.signUpLink}>Sign Up</Text>
         </TouchableOpacity>
       </View>
-
-
       <View>
         <Text style={styles.or}>OR</Text>
       </View>
-
-
       <IconButton
         text="Login with Google"
         backgroundColor="white"
@@ -103,6 +93,18 @@ const LoginScreen: React.FC = () => {
         onClick={handleGoogleLogin}
         width={null}
       />
+      {/* {
+        modalVisible && (
+          <Modal
+            text="Login Successfully"
+            oktext="OK"
+            dismisstext="Cancel"
+            okClick={() => navigate("MainStack", {})}
+            dismissClick={() => setModalVisible(false)}
+            width={null}
+          />
+        )
+      } */}
     </View>
   );
 };

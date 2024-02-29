@@ -8,5 +8,8 @@ export const icons: { [key: string]: any } = {
     user: require('assets/icons/user-outline.png'),
     userTyping: require('assets/icons/user-outline-typing.png'),
     check: require('assets/icons/check.png'),
+};
 
+export const loaders: { [key: string]: any } = {
+    dots: require('assets/loaders/loader.gif'),
 };

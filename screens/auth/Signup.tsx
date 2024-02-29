@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { View, Text, StyleSheet, TouchableOpacity } from "react-native";
 import { navigate } from "navigation/NavigationService";
 // import { createUser } from "service/screens/signupService";
-import { PrimaryButton, Input } from "component";
+import { PrimaryButton, Input, LineLoading } from "component";
 import { theme } from "constants/theme";
 import { FormData } from "model/signupForm";
 import { createUser } from "service/screens/signupService";
@@ -15,7 +15,8 @@ const SignupScreen: React.FC = () => {
     password: "",
     confirmPassword: "",
   });
-
+  const [loading, setLoading] = useState(false);
+  const [showModal, setShowModal] = useState(false);
   const [errors, setErrors] = useState<Partial<FormData>>({});
   const [showPassword, setShowPassword] = useState(true);
 
@@ -80,13 +81,14 @@ const SignupScreen: React.FC = () => {
   const handleSignup = async () => {
     if (Object.keys(errors).length === 0) {
       // Perform signup logic
-      console.log("Perform signup logic")
+      setLoading(true);
       const response: Response = await createUser(formData);
       if (response.status) {
         navigate("Login", {});
       } else {
         // Handle error
       }
+      setLoading(false);
     }
   };
 
@@ -145,6 +147,11 @@ const SignupScreen: React.FC = () => {
       <TouchableOpacity onPress={() => navigate("Login", {})}>
         <Text style={styles.link}>Already have an account? Login</Text>
       </TouchableOpacity>
+
+      {
+        loading && <LineLoading />
+      }
+
     </View>
   );
 };
