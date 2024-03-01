@@ -30,8 +30,8 @@ const LoginScreen: React.FC = () => {
     }
     let response: Response = await Login(data.email, data.password);
     if (response.status && response.data.role === Role.User) {
-      setModalVisible(true);
-      //navigate("MainStack", {});
+      // setModalVisible(true);
+      navigate("MainStack", {});
     } else {
       invalidLoginAlert();
     }
