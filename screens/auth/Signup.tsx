@@ -148,9 +148,9 @@ const SignupScreen: React.FC = () => {
         <Text style={styles.link}>Already have an account? Login</Text>
       </TouchableOpacity>
 
-      {
+      {/* {
         !showModal && <ErrorModal text={"Signup failed"} dismissText={"OK"} onDismiss={() => setShowModal(false)} />
-      }
+      } */}
     </View>
   );
 };
