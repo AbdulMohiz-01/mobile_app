@@ -21,7 +21,7 @@ export const Login = async (email: string, password: string) => {
         message: "Invalid Login",
         data: {}
     }
-    if (data.password === password) {
+    if (data?.password === password) {
         response = {
             status: true,
             message: "Login Successful",

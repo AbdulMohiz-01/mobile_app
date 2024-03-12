@@ -17,8 +17,8 @@ const LoginScreen: React.FC = () => {
     email: "",
     password: "",
   });
-  const [modalVisible, setModalVisible] = React.useState(false);
   const [showPassword, setShowPassword] = React.useState(true);
+  const [loading, setLoading] = React.useState(false);
 
   const toggleSecureTextEntry = () => {
     setShowPassword(!showPassword);
@@ -28,13 +28,14 @@ const LoginScreen: React.FC = () => {
     if (!data.email || !data.password) {
       return;
     }
+    setLoading(true);
     let response: Response = await Login(data.email, data.password);
     if (response.status && response.data.role === Role.User) {
-      // setModalVisible(true);
       navigate("MainStack", {});
     } else {
       invalidLoginAlert();
     }
+    setLoading(false);
   };
 
   const handleForgotPassword = () => {
@@ -76,7 +77,7 @@ const LoginScreen: React.FC = () => {
       <TouchableOpacity onPress={handleForgotPassword} style={styles.forgotContainer}>
         <Text style={styles.forgot}>Forgot Password?</Text>
       </TouchableOpacity>
-      <PrimaryButton text="Login" onClick={handleLogin} width={null} />
+      <PrimaryButton text={loading ? "Logging in..." : "Login"} isLoading={loading} disable={loading} onClick={handleLogin} width={null} />
       {/* dont have an account sign up */}
       <View style={styles.signUpContainer}>
         <Text>
@@ -97,18 +98,6 @@ const LoginScreen: React.FC = () => {
         onClick={handleGoogleLogin}
         width={null}
       />
-      {/* {
-        modalVisible && (
-          <Modal
-            text="Login Successfully"
-            oktext="OK"
-            dismisstext="Cancel"
-            okClick={() => navigate("MainStack", {})}
-            dismissClick={() => setModalVisible(false)}
-            width={null}
-          />
-        )
-      } */}
     </View>
   );
 };

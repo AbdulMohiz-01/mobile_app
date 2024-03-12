@@ -12,4 +12,5 @@ export const icons: { [key: string]: any } = {
 
 export const loaders: { [key: string]: any } = {
     dots: require('assets/loaders/loader.gif'),
+    circle: require('assets/loaders/circle.gif'),
 };
