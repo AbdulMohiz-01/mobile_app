@@ -14,6 +14,7 @@ export const invalidLoginAlert = () =>
     ]);
 
 export const Login = async (email: string, password: string) => {
+    console.log(email, password)
     let data = await findByEmail(Collection.User, email);
     let response: Response = {
         status: false,
@@ -26,7 +27,6 @@ export const Login = async (email: string, password: string) => {
             message: "Login Successful",
             data: data
         }
-        return response;
     }
     return response;
 }
