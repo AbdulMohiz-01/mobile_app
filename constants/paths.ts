@@ -8,9 +8,18 @@ export const icons: { [key: string]: any } = {
     user: require('assets/icons/user-outline.png'),
     userTyping: require('assets/icons/user-outline-typing.png'),
     check: require('assets/icons/check.png'),
+    search: require('assets/icons/search.png'),
+    bell: require('assets/icons/bell.png'),
+    eyeOpen: require('assets/icons/eye-open.png'),
+    homeBannerImage: require('assets/icons/home-banner-image.png'),
 };
 
 export const loaders: { [key: string]: any } = {
     dots: require('assets/loaders/loader.gif'),
     circle: require('assets/loaders/circle.gif'),
+};
+
+export const images: { [key: string]: any } = {
+    sample1: require('assets/images/sample1.jpg'),
+    sample2: require('assets/images/sample2.jpg'),
 };

@@ -1,7 +1,7 @@
 import { createRef, RefObject } from "react";
 
 // Define the type for the navigation reference
-type NavigationRefType = RefObject<any>; // You can replace `any` with the specific type if you know the type of navigationRef.current
+type NavigationRefType = RefObject<any>;
 
 // Create the navigation reference
 export const navigationRef: NavigationRefType = createRef();

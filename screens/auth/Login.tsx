@@ -25,17 +25,19 @@ const LoginScreen: React.FC = () => {
   }
 
   const handleLogin = async () => {
-    if (!data.email || !data.password) {
-      return;
-    }
-    setLoading(true);
-    let response: Response = await Login(data.email, data.password);
-    if (response.status && response.data.role === Role.User) {
-      navigate("MainStack", {});
-    } else {
-      invalidLoginAlert();
-    }
-    setLoading(false);
+    navigate("MainStack", {});
+
+    // if (!data.email || !data.password) {
+    //   return;
+    // }
+    // setLoading(true);
+    // let response: Response = await Login(data.email, data.password);
+    // if (response.status && response.data.role === Role.User) {
+    //   navigate("MainStack", {});
+    // } else {
+    //   invalidLoginAlert();
+    // }
+    // setLoading(false);
   };
 
   const handleForgotPassword = () => {

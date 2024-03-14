@@ -13,6 +13,7 @@ interface TextInputProps {
     isValid?: boolean;
     toggleSecureTextEntry?: () => void;
     onBlur?: () => void;
+    width?: string;
 }
 
 const TextInput: React.FC<TextInputProps> = ({ value, onChangeText, placeholder, secureTextEntry, beforeIcon, afterIcon, isValid, isPassword, toggleSecureTextEntry, onBlur }) => {
@@ -23,7 +24,7 @@ const TextInput: React.FC<TextInputProps> = ({ value, onChangeText, placeholder,
             ) : beforeIcon && icons[beforeIcon] && <Image source={icons[beforeIcon]} style={styles.iconLeft} />
             }
             <RNTextInput
-                style={styles.inputText}
+                style={[styles.inputText]}
                 value={value}
                 onChangeText={onChangeText}
                 placeholder={placeholder}
@@ -57,6 +58,7 @@ const styles = StyleSheet.create({
         height: 50,
         color: 'black',
         fontSize: 16,
+        width: "100%",
     },
     iconLeft: {
         width: 20,
