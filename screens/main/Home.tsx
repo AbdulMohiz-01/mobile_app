@@ -1,7 +1,7 @@
 import { Input, PrimaryButton } from "component";
 import React from "react";
 import { Text, View, StyleSheet, Image, Button, Touchable, TouchableOpacity } from "react-native";
-import { icons } from "constants/paths";
+import { icons, images } from "constants/paths";
 import { theme } from "constants/theme";
 import { navigate } from "@navigation/NavigationService";
 
@@ -47,7 +47,7 @@ const Home: React.FC = () => {
           </TouchableOpacity>
         </View>
         <View style={styles.bannerRightChild}>
-          <Image source={icons.homeBannerImage} style={styles.bannerImage} />
+          <Image source={images.homeBannerImage} style={styles.bannerImage} />
         </View>
       </View>
 

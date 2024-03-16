@@ -11,7 +11,7 @@ export const icons: { [key: string]: any } = {
     search: require('assets/icons/search.png'),
     bell: require('assets/icons/bell.png'),
     eyeOpen: require('assets/icons/eye-open.png'),
-    homeBannerImage: require('assets/icons/home-banner-image.png'),
+    trash: require('assets/icons/trash.png'),
 };
 
 export const loaders: { [key: string]: any } = {
@@ -22,4 +22,5 @@ export const loaders: { [key: string]: any } = {
 export const images: { [key: string]: any } = {
     sample1: require('assets/images/sample1.jpg'),
     sample2: require('assets/images/sample2.jpg'),
+    homeBannerImage: require('assets/icons/home-banner-image.png'),
 };

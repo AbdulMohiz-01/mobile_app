@@ -1,8 +1,32 @@
 import { images } from "constants/paths";
-import React from "react";
-import { Text, View, StyleSheet, Image, Touchable, TouchableOpacity } from "react-native";
+import React, { useState } from "react";
+import { Text, View, StyleSheet, Image, TouchableOpacity, Platform } from "react-native";
+import * as ImagePicker from 'expo-image-picker';
+import { icons } from "constants/paths";
+import { analyseImage } from "service/screens/analyseImageService";
 
 const AnalyseImage: React.FC = () => {
+  const [selectedImage, setSelectedImage] = useState(null);
+
+  const handleChooseImage = async () => {
+    if (selectedImage) {
+      console.log("⚒️⚒️", selectedImage);
+      await analyseImage(selectedImage);
+      return;
+    }
+    let permissionResult = await ImagePicker.requestMediaLibraryPermissionsAsync();
+    if (permissionResult.granted === false) {
+      alert('Permission to access camera roll is required!');
+      return;
+    }
+
+    let result = await ImagePicker.launchImageLibraryAsync();
+    console.log(result);
+    if (!result.canceled) {
+      setSelectedImage({ uri: result.assets[0].uri });
+    }
+  };
+
   return (
     <View style={styles.wrapper}>
       <View style={styles.headerContainer}>
@@ -20,9 +44,17 @@ const AnalyseImage: React.FC = () => {
       </View>
 
       <View style={styles.uploadWrapper}>
-        <TouchableOpacity style={styles.uploadButton}>
-          <Text style={styles.uploadButtonText}>Upload Image</Text>
+        <TouchableOpacity style={styles.uploadButton} onPress={handleChooseImage}>
+          <Text style={styles.uploadButtonText}>{selectedImage ? "Analyse Image" : "Upload Image"}</Text>
         </TouchableOpacity>
+        {selectedImage && (
+          <View style={styles.selectedImageWrapper}>
+            <Image source={{ uri: selectedImage.uri }} style={styles.selectedImage} />
+            <TouchableOpacity style={styles.deleteIcon} onPress={() => setSelectedImage(null)}>
+              <Image source={icons.trash} style={styles.icon} />
+            </TouchableOpacity>
+          </View>
+        )}
         <View style={styles.instructionContainer}>
           {/* instructions */}
           <View style={styles.instructionWrapper}>
@@ -30,17 +62,17 @@ const AnalyseImage: React.FC = () => {
             <Text style={styles.instructionSubText}>JPEG, JPG</Text>
           </View>
           <View style={styles.instructionWrapper}>
-            <Text style={styles.instructionText}>10 minutes</Text>
+            <Text style={styles.instructionText}>1 minute</Text>
             <Text style={styles.instructionSubText}>max duration</Text>
           </View>
           <View style={[styles.instructionWrapper, { borderRightWidth: 0 }]}>
-            <Text style={styles.instructionText}>5 MB</Text>
+            <Text style={styles.instructionText}>10 MB</Text>
             <Text style={styles.instructionSubText}>image size</Text>
           </View>
         </View>
       </View>
     </View>
-  )
+  );
 };
 
 const styles = StyleSheet.create({
@@ -116,7 +148,35 @@ const styles = StyleSheet.create({
   instructionSubText: {
     color: "gray",
   },
-
+  selectedImage: {
+    width: 200,
+    height: 200,
+    alignSelf: 'center',
+    marginVertical: 20,
+    borderRadius: 10,
+  },
+  icon: {
+    width: 30,
+    height: 30,
+    alignSelf: 'center',
+  },
+  selectedImageWrapper: {
+    position: 'relative',
+  },
+  deleteIcon: {
+    position: 'absolute',
+    top: 0,
+    right: 0,
+    // backgroundColor: 'rgba(0, 0, 0, 0.5)',
+    padding: 5,
+    borderRadius: 999,
+    // give little border shadow
+    shadowColor: "#000",
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+  },
 });
 
 export default AnalyseImage;
