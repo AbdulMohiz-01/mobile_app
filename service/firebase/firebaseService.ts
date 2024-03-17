@@ -24,7 +24,7 @@ export const retrieveAllDocuments = async (collectionName: string) => {
 export const addDocument = async (collectionName: string, data: object) => {
 
   try {
-    console.log(data, "this is data inside the addDocument function")
+    // console.log(data, "this is data inside the addDocument function")
     const docRef = await addDoc(collection(db, collectionName), data);
     if (docRef.id) {
       return true;
@@ -37,7 +37,7 @@ export const addDocument = async (collectionName: string, data: object) => {
 export const updateDocument = async (collectionName: string, docId: string, data: object) => {
   try {
     await setDoc(doc(db, collectionName, docId), data);
-    console.log('Document updated with ID: ', docId);
+    // console.log('Document updated with ID: ', docId);
   } catch (error) {
     console.error('Error updating document:', error);
   }

@@ -20,12 +20,10 @@ export const preprocessImage = async (imageUri) => {
   if (!response.ok) {
     throw new Error("Error while preprocessing image");
   }
-
-  await predictImage();
+  return true;
 };
 
 export const predictImage = async () => {
-  console.log("now predicting");
   const response = await fetch(API_ENDPOINTS.predict, {
     method: "GET",
   });
@@ -35,6 +33,5 @@ export const predictImage = async () => {
     throw new Error("Error while predicting image");
   }
 
-  const data = await response.json();
-  console.log(data.predicted_class);
+  return await response.json();
 };

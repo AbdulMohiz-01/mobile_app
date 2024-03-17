@@ -19,6 +19,12 @@
       "model/*": [
         "model/*"
       ],  
+      "data/*": [
+        "data/*"
+      ],
+      "style/*": [
+        "style/*"
+      ],
     }
   },
   "exclude": [

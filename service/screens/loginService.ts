@@ -14,7 +14,7 @@ export const invalidLoginAlert = () =>
     ]);
 
 export const Login = async (email: string, password: string) => {
-    console.log(email, password)
+    // console.log(email, password)
     let data = await findByEmail(Collection.User, email);
     let response: Response = {
         status: false,

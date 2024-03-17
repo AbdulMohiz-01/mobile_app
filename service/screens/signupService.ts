@@ -12,7 +12,7 @@ const generateRandomColor = () => {
 
 export const createUser = async (data: FormData): Promise<Response> => {
 
-    console.log(data, "checking the existing user createUser function");
+    // console.log(data, "checking the existing user createUser function");
 
     const existingUser = await findByEmail(Collection.User, data.email);
     if (existingUser != null) {
@@ -22,7 +22,7 @@ export const createUser = async (data: FormData): Promise<Response> => {
         }
     }
 
-    console.log("no existing user found")
+    // console.log("no existing user found")
     const user: User = {
         name: data.name,
         email: data.email,
@@ -32,12 +32,12 @@ export const createUser = async (data: FormData): Promise<Response> => {
         profileColor: generateRandomColor(),
     }
 
-    console.log("hitting the addDocument function in createUser function")
+    // console.log("hitting the addDocument function in createUser function")
     const response = await addDocument(Collection.User, user);
 
     if (response) {
         // TODO: add the user to the local storage or redux
-        console.log("User created successfully");
+        // console.log("User created successfully");
         return {
             status: true,
             message: "User created successfully",
