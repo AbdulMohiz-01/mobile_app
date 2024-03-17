@@ -1,10 +1,12 @@
 import React from "react";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
-import { MaterialCommunityIcons } from '@expo/vector-icons';
+import { Image, Text } from 'react-native'; // Import Image component
 import HomeScreen from "screens/main/Home";
 import AnalyseImage from "screens/main/AnalyseImage";
 import Dashboard from "@screens/main/Profile";
+import { icons } from "constants/paths";
+import Profile from "@screens/main/Profile";
 
 // Define the type for the root stack param list
 type RootStackParamList = {
@@ -22,24 +24,37 @@ const MainStack: React.FC = () => {
       initialRouteName="Home"
       screenOptions={({ route }) => ({
         tabBarIcon: ({ color, size }) => {
-          let iconName;
+          let iconSource;
 
           if (route.name === 'Profile') {
-            iconName = 'account';
+            iconSource = icons['profile'];
           } else if (route.name === 'Home') {
-            iconName = 'home';
+            iconSource = icons['home'];
           } else if (route.name === 'AnalyseImage') {
-            iconName = 'image-search';
+            iconSource = icons['search'];
           }
 
           // You can return any component that you like here!
-          return <MaterialCommunityIcons name={iconName} size={size} color="#199a8e" />;
+          return <Image source={iconSource} style={{ width: size, height: size, tintColor: color }} />;
+        },
+        tabBarLabel: ({ focused }) => {
+          let label;
+
+          if (route.name === 'Profile') {
+            label = 'Profile';
+          } else if (route.name === 'Home') {
+            label = 'Home';
+          } else if (route.name === 'AnalyseImage') {
+            label = 'D-Retinopathy';
+          }
+
+          return <Text style={{ color: focused ? '#199a8e' : '#666' }}>{label}</Text>;
         },
       })}
     >
       <Tab.Screen name="Home" component={HomeScreen} />
       <Tab.Screen name="AnalyseImage" component={AnalyseImage} />
-      <Tab.Screen name="Profile" component={Dashboard} />
+      <Tab.Screen name="Profile" component={Profile} />
     </Tab.Navigator>
   );
 };

@@ -12,6 +12,9 @@ export const icons: { [key: string]: any } = {
     bell: require('assets/icons/bell.png'),
     eyeOpen: require('assets/icons/eye-open.png'),
     trash: require('assets/icons/trash.png'),
+    home: require('assets/icons/home.png'),
+    profile: require('assets/icons/profile.png'),
+    eyeSearch: require('assets/icons/db-retina.png'),
 };
 
 export const loaders: { [key: string]: any } = {

@@ -150,15 +150,10 @@ export const styles = StyleSheet.create({
         fontSize: 18,
         fontWeight: "bold",
     },
-    resultDetailsButton: {
-        backgroundColor: "#199a8e",
-        padding: 10,
-        borderRadius: 999,
-        marginTop: 10,
-    },
     resultDetailsButtonText: {
-        color: "#ffff",
-        textAlign: "center",
+        color: "#199a8e",
+        fontSize: 16,
+        textDecorationLine: "underline",
     },
 
 });

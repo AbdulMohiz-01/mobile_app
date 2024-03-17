@@ -34,11 +34,11 @@ const AnalyseImage: React.FC = () => {
     let permissionResult = await ImagePicker.requestMediaLibraryPermissionsAsync();
     if (permissionResult.granted === false) {
       alert('Permission to access camera roll is required!');
-      return;
+      // return;
     }
 
     let result = await ImagePicker.launchImageLibraryAsync();
-    console.log(result);
+    // console.log(result);
     if (!result.canceled) {
       setSelectedImage({ uri: result.assets[0].uri });
       setResult(null);
@@ -51,7 +51,7 @@ const AnalyseImage: React.FC = () => {
       return "#00ff00";
     }
     if (result?.class === "2") {
-      return "#ffff00";
+      return "#e6e600";
     }
     if (result?.class === "3") {
       return "#ff0000";
@@ -126,9 +126,9 @@ const AnalyseImage: React.FC = () => {
                       <Text></Text>
                       <Text style={styles.resultDetailsHeading}>Precautions</Text>
                       <Text style={styles.resultDetailsText}>{descriptiveResult?.details.precautions}</Text>
-                      <View style={styles.resultDetailsButton}>
-                        <Text style={styles.resultDetailsButtonText}>Learn more</Text>
-                      </View>
+                      <TouchableOpacity>
+                        <Text style={styles.resultDetailsButtonText}>Learn More</Text>
+                      </TouchableOpacity>
                     </View>
                   </View>
                 </View>
