@@ -105,14 +105,14 @@ const AnalyseImage: React.FC = () => {
                   <Text style={styles.instructionText}>Image only</Text>
                   <Text style={styles.instructionSubText}>JPEG, JPG</Text>
                 </View>
-                <View style={styles.instructionWrapper}>
+                <View style={[styles.instructionWrapper, { borderRightWidth: 0 }]}>
                   <Text style={styles.instructionText}>1 minute</Text>
                   <Text style={styles.instructionSubText}>max duration</Text>
                 </View>
-                <View style={[styles.instructionWrapper, { borderRightWidth: 0 }]}>
+                {/* <View style={[styles.instructionWrapper, { borderRightWidth: 0 }]}>
                   <Text style={styles.instructionText}>10 MB</Text>
                   <Text style={styles.instructionSubText}>image size</Text>
-                </View>
+                </View> */}
               </View> : (
                 // display descriptive results here
                 <View style={styles.resultContainer}>

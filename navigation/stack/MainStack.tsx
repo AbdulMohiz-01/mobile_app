@@ -1,24 +1,41 @@
 import React from "react";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
-import { Image, Text } from 'react-native'; // Import Image component
+import { Image, Text, TouchableOpacity } from 'react-native'; // Import TouchableOpacity component
 import HomeScreen from "screens/main/Home";
 import AnalyseImage from "screens/main/AnalyseImage";
 import Dashboard from "@screens/main/Profile";
 import { icons } from "constants/paths";
 import Profile from "@screens/main/Profile";
+import EditProfile from "@screens/main/EditProfile";
 
 // Define the type for the root stack param list
 type RootStackParamList = {
-  Dashboard: undefined;
-  Home: undefined;
-  AnalyseImage: undefined;
+  Main: undefined;
+  EditProfile: undefined; // Add EditProfile route to the stack navigator
 };
 
 const Stack = createNativeStackNavigator<RootStackParamList>(); // Specify the type of the stack navigator
 const Tab = createBottomTabNavigator();
 
 const MainStack: React.FC = () => {
+  return (
+    <Stack.Navigator>
+      <Stack.Screen
+        name="Main"
+        component={MainTabNavigator} // Render the tab navigator inside a stack navigator
+        options={{ headerShown: false }} // Hide the header for the tab navigator
+      />
+      <Stack.Screen
+        name="EditProfile"
+        component={EditProfile}
+        options={{ headerTitle: "Edit Profile" }} // Set the title for the EditProfile screen
+      />
+    </Stack.Navigator>
+  );
+};
+
+const MainTabNavigator: React.FC = () => {
   return (
     <Tab.Navigator
       initialRouteName="Home"

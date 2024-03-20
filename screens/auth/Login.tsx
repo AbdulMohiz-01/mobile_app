@@ -11,33 +11,38 @@ import { PrimaryButton, Input, IconButton, LineLoading } from "component";
 import { theme } from "constants/theme";
 import { Response } from "model/response";
 import { Role } from "model/role";
+import { login } from "redux/slice/userSlice";
+import store from "redux/store";
+import { useDispatch, useSelector } from "react-redux";
 
 const LoginScreen: React.FC = () => {
   const [data, setData] = React.useState({
     email: "",
     password: "",
   });
+  const dispatch = useDispatch();
   const [showPassword, setShowPassword] = React.useState(true);
   const [loading, setLoading] = React.useState(false);
-
   const toggleSecureTextEntry = () => {
     setShowPassword(!showPassword);
   }
 
   const handleLogin = async () => {
-    navigate("MainStack", {});
+    // navigate("MainStack", {});
 
-    // if (!data.email || !data.password) {
-    //   return;
-    // }
-    // setLoading(true);
-    // let response: Response = await Login(data.email, data.password);
-    // if (response.status && response.data.role === Role.User) {
-    //   navigate("MainStack", {});
-    // } else {
-    //   invalidLoginAlert();
-    // }
-    // setLoading(false);
+    if (!data.email || !data.password) {
+      return;
+    }
+    setLoading(true);
+    let response: Response = await Login(data.email, data.password);
+    if (response.status && response.data.role === Role.User) {
+      dispatch(login({ user: response.data }));
+
+      navigate("MainStack", {});
+    } else {
+      invalidLoginAlert();
+    }
+    setLoading(false);
   };
 
   const handleForgotPassword = () => {

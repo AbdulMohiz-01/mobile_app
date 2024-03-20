@@ -76,8 +76,8 @@ export const styles = StyleSheet.create({
         flexDirection: "column",
         justifyContent: "center",
         alignItems: "center",
-        borderRightWidth: 1,
-        borderRightColor: "gray",
+        // borderRightWidth: 1,
+        // borderRightColor: "gray",
         paddingRight: 10,
     },
     instructionText: {

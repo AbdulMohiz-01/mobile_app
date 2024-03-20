@@ -15,6 +15,10 @@ export const icons: { [key: string]: any } = {
     home: require('assets/icons/home.png'),
     profile: require('assets/icons/profile.png'),
     eyeSearch: require('assets/icons/db-retina.png'),
+    logout: require('assets/icons/logout.png'),
+    editProfile: require('assets/icons/edit-profile.png'),
+    profileImageUpload: require('assets/icons/profile-image-upload.png'),
+    arrowRight: require('assets/icons/arrow-right.png'),
 };
 
 export const loaders: { [key: string]: any } = {
