@@ -156,4 +156,57 @@ export const styles = StyleSheet.create({
         textDecorationLine: "underline",
     },
 
+    chartContainer: {
+        display: "flex",
+        flexDirection: "column",
+        justifyContent: "center",
+        alignItems: "center",
+        marginTop: 20,
+        marginBottom: 20,
+        padding: 20,
+        paddingTop: 0,
+        backgroundColor: "#f5f5f5",
+        borderRadius: 10,
+
+    },
+    chartWrapper: {
+        width: 200,
+        height: 200,
+        alignSelf: "center",
+        padding: 20,
+    },
+    legendsWrapper: {
+        display: "flex",
+        flexDirection: "row",
+        justifyContent: "space-around",
+        marginTop: 10,
+        gap: 20,
+    },
+    legend: {
+        fontSize: 12,
+        fontWeight: "bold",
+    },
+    legendValue: {
+        fontSize: 12,
+        color: "gray",
+    },
+    legendRow: {
+        display: "flex",
+        flexDirection: "column",
+        alignItems: "center",
+        gap: 5,
+    },
+    legendColorBar: {
+        width: 20,
+        height: 5,
+        borderRadius: 999,
+    },
+    boldText: {
+        fontWeight: "bold",
+        color: "black",
+    },
+    nullclass: {
+        color: "gray",
+    },
+
 });

@@ -35,3 +35,16 @@ export const predictImage = async () => {
 
   return await response.json();
 };
+
+export const xaiImage = async () => {
+  const response = await fetch(API_ENDPOINTS.xai, {
+    method: "GET",
+  });
+
+  // check if response is ok
+  if (!response.ok) {
+    throw new Error("Error while explaining image");
+  }
+
+  return await response.json();
+};

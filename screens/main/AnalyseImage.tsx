@@ -6,11 +6,15 @@ import { icons, loaders } from "constants/paths";
 import { analyseImage } from "service/screens/analyseImageService";
 import { DiabeticRetinopathyResult, ServerResult, diabeticRetinopathyData } from "model/results";
 import { styles } from "style/analyseImage";
+import { PieChart } from "react-native-gifted-charts";
+
 const AnalyseImage: React.FC = () => {
   const [selectedImage, setSelectedImage] = useState(null);
   const [isAnalyzing, setIsAnalyzing] = useState(false);
   const [result, setResult] = useState<ServerResult | null>(null);
   const [descriptiveResult, setDescriptiveResult] = useState<DiabeticRetinopathyResult | null>(null);
+  const [pieChartData, setPieChartData] = useState([]);
+  const [xaiResults, setXaiResults] = useState([]);
 
   const handleChooseImage = async () => {
     if (selectedImage) {
@@ -24,6 +28,10 @@ const AnalyseImage: React.FC = () => {
           predictons: response.data.predictions
         }))
         const predictedClass = response.data.predicted_class.toString();
+        setPieChartData([
+          { value: response.data.predictions[0], color: '#00ff00' },
+
+        ]);
         setDescriptiveResult(diabeticRetinopathyData[predictedClass]);
 
       }
@@ -31,6 +39,9 @@ const AnalyseImage: React.FC = () => {
       setIsAnalyzing(false);
       return;
     }
+    setPieChartData([]);
+    setDescriptiveResult(null);
+    setResult(null);
     let permissionResult = await ImagePicker.requestMediaLibraryPermissionsAsync();
     if (permissionResult.granted === false) {
       alert('Permission to access camera roll is required!');
@@ -43,8 +54,16 @@ const AnalyseImage: React.FC = () => {
       setSelectedImage({ uri: result.assets[0].uri });
       setResult(null);
       setDescriptiveResult(null);
+      setPieChartData([]);
     }
   };
+
+  function getPercentageOfPrediction(prediction?: number) {
+    if (prediction != null) {
+      return Math.round(prediction * 100) + "%";
+    }
+    return "0%";
+  }
 
   function getAttentionTextColor() {
     if (result?.class === "0" || result?.class === "1") {
@@ -114,21 +133,58 @@ const AnalyseImage: React.FC = () => {
                   <Text style={styles.instructionSubText}>image size</Text>
                 </View> */}
               </View> : (
-                // display descriptive results here
-                <View style={styles.resultContainer}>
-                  <View style={styles.resultWrapper}>
-                    <Text style={[styles.resultAttentionText, { color: getAttentionTextColor() }]}>{descriptiveResult?.description}</Text>
-                    <View style={styles.resultDetails}>
-                      <Text style={styles.resultDetailsHeading}>Details</Text>
-                      <Text style={styles.resultDetailsText}>{descriptiveResult?.details.short_description}</Text>
-                      <Text></Text>
-                      <Text style={styles.resultDetailsText}>{descriptiveResult?.details.stage}</Text>
-                      <Text></Text>
-                      <Text style={styles.resultDetailsHeading}>Precautions</Text>
-                      <Text style={styles.resultDetailsText}>{descriptiveResult?.details.precautions}</Text>
-                      <TouchableOpacity>
-                        <Text style={styles.resultDetailsButtonText}>Learn More</Text>
-                      </TouchableOpacity>
+                <View>
+                  {
+                    pieChartData.length > 0 &&
+                    <View style={styles.chartContainer}>
+                      <View style={styles.chartWrapper}>
+                        <PieChart data={pieChartData} donut radius={80} />
+                      </View>
+                      <View style={styles.legendsWrapper}>
+                        <View>
+                          <Text style={[styles.legendColorBar, { backgroundColor: '#00ff00' }]}></Text>
+                          <Text style={styles.legend}>No Dr: </Text>
+                          <Text style={[styles.legendValue, result.class == '0' ? styles.boldText : styles.nullclass]}>{getPercentageOfPrediction(result.predictons[0])}</Text>
+                        </View>
+                        <View >
+                          <Text style={[styles.legendColorBar, { backgroundColor: '#e6e600' }]}></Text>
+                          <Text style={styles.legend}>Mild: </Text>
+                          <Text style={[styles.legendValue, result.class == '1' ? styles.boldText : styles.nullclass]}>{getPercentageOfPrediction(result.predictons[1])}</Text>
+                        </View>
+                        <View>
+                          <Text style={[styles.legendColorBar, { backgroundColor: '#ff0000' }]}></Text>
+                          <Text style={styles.legend}>Moderate: </Text>
+                          <Text style={[styles.legendValue, result.class == '2' ? styles.boldText : styles.nullclass]}>{getPercentageOfPrediction(result.predictons[2])}</Text>
+                        </View>
+                        <View>
+                          <Text style={[styles.legendColorBar, { backgroundColor: '#8b0000' }]}></Text>
+                          <Text style={styles.legend}>Severe: </Text>
+                          <Text style={[styles.legendValue, result.class == '3' ? styles.boldText : styles.nullclass]}>{getPercentageOfPrediction(result.predictons[3])}</Text>
+                        </View>
+                        <View>
+                          <Text style={[styles.legendColorBar, { backgroundColor: '#8b0000' }]}></Text>
+                          <Text style={styles.legend}>Proliferative: </Text>
+                          <Text style={[styles.legendValue, result.class == '4' ? styles.boldText : styles.nullclass]}>{getPercentageOfPrediction(result.predictons[4])}</Text>
+                        </View>
+
+                      </View>
+                    </View>
+                  }
+                  <View style={styles.resultContainer}>
+                    <View style={styles.resultWrapper}>
+                      <Text style={[styles.resultAttentionText, { color: getAttentionTextColor() }]}>{descriptiveResult?.description}</Text>
+                      <View style={styles.resultDetails}>
+                        <Text style={styles.resultDetailsHeading}>Details</Text>
+                        <Text style={styles.resultDetailsText}>{descriptiveResult?.details.short_description}</Text>
+                        <Text></Text>
+                        <Text style={styles.resultDetailsText}>{descriptiveResult?.details.stage}</Text>
+                        <Text></Text>
+                        <Text style={styles.resultDetailsHeading}>Precautions</Text>
+                        <Text style={styles.resultDetailsText}>{descriptiveResult?.details.precautions}</Text>
+                        <TouchableOpacity>
+                          <Text style={styles.resultDetailsButtonText}>Learn More</Text>
+                        </TouchableOpacity>
+                      </View>
                     </View>
                   </View>
                 </View>
