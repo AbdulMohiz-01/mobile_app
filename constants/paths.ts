@@ -19,6 +19,7 @@ export const icons: { [key: string]: any } = {
     editProfile: require('assets/icons/edit-profile.png'),
     profileImageUpload: require('assets/icons/profile-image-upload.png'),
     arrowRight: require('assets/icons/arrow-right.png'),
+    info: require('assets/icons/info.png'),
 };
 
 export const loaders: { [key: string]: any } = {

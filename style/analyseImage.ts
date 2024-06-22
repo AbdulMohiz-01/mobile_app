@@ -208,5 +208,59 @@ export const styles = StyleSheet.create({
     nullclass: {
         color: "gray",
     },
+    xaiContainer: {
+        display: "flex",
+        flexDirection: "column",
+        justifyContent: "center",
+        alignItems: "center",
+        // marginTop: 20,
+        marginBottom: 20,
+        padding: 20,
+        paddingTop: 0,
+        backgroundColor: "#f5f5f5",
+        borderRadius: 10,
+    },
+    xaiHeading: {
+        fontSize: 18,
+        fontWeight: 'bold',
+        marginBottom: 10,
+        marginTop: 10,
+    },
+    xaiImageBorder: {
+        borderRadius: 10,
+    },
+    xaiImage: {
+        width: 200,
+        height: 200,
+        marginBottom: 10,
+    },
+    noteContainer: {
+        flexDirection: 'row',
+        backgroundColor: '#eaf4ff',
+        padding: 10,
+        borderRadius: 8,
+        alignItems: 'center',
+    },
+    noteIcon: {
+        width: 24,
+        height: 24,
+        marginRight: 10,
+    },
+    noteTextContainer: {
+        flex: 1,
+    },
+    noteHeading: {
+        fontWeight: 'bold',
+        color: '#007bff',
+        marginBottom: 5,
+    },
+    noteText: {
+        fontSize: 14,
+        lineHeight: 20,
+        color: '#333',
+    },
+
+
+
 
 });

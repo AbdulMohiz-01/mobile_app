@@ -30,11 +30,11 @@ const LoginScreen: React.FC = () => {
   const handleLogin = async () => {
     navigate("MainStack", {});
 
-    if (!data.email || !data.password) {
-      return;
-    }
-    setLoading(true);
-    let response: Response = await Login(data.email, data.password);
+    // if (!data.email || !data.password) {
+    //   return;
+    // }
+    // setLoading(true);
+    // let response: Response = await Login(data.email, data.password);
 
     // if (response.status && response.data.role === Role.User) {
     //   dispatch(login({ user: response.data }));
@@ -51,12 +51,6 @@ const LoginScreen: React.FC = () => {
   };
 
   const handleGoogleLogin = async () => {
-    // Handle google login logic
-    // await signInWithPopup(auth, provider)
-    //   .then((result) => {
-    //     const user = result.user;
-    //     console.log(user);
-    //   })
   };
 
   return (

@@ -7,6 +7,7 @@ import { analyseImage } from "service/screens/analyseImageService";
 import { DiabeticRetinopathyResult, ServerResult, diabeticRetinopathyData } from "model/results";
 import { styles } from "style/analyseImage";
 import { PieChart } from "react-native-gifted-charts";
+import { getXaiImage } from "service/artifact/artifactService";
 
 const AnalyseImage: React.FC = () => {
   const [selectedImage, setSelectedImage] = useState(null);
@@ -14,13 +15,15 @@ const AnalyseImage: React.FC = () => {
   const [result, setResult] = useState<ServerResult | null>(null);
   const [descriptiveResult, setDescriptiveResult] = useState<DiabeticRetinopathyResult | null>(null);
   const [pieChartData, setPieChartData] = useState([]);
-  const [xaiResults, setXaiResults] = useState([]);
+  const [xaiImageUri, setXaiImageUri] = useState<string | null>(null); // New state for XAI image
 
   const handleChooseImage = async () => {
     if (selectedImage) {
       setIsAnalyzing(true);
       const response = await analyseImage(selectedImage);
+
       if (response.status) {
+        const xaiImage = await getXaiImage();
         setResult(prevState => ({
           ...prevState,
           class: response.data.predicted_class.toString(),
@@ -30,9 +33,14 @@ const AnalyseImage: React.FC = () => {
         const predictedClass = response.data.predicted_class.toString();
         setPieChartData([
           { value: response.data.predictions[0], color: '#00ff00' },
+          { value: response.data.predictions[1], color: '#e6e600' },
+          { value: response.data.predictions[2], color: '#ff0000' },
+          { value: response.data.predictions[3], color: '#8b0000' },
+          { value: response.data.predictions[4], color: '#8b0000' }
 
         ]);
         setDescriptiveResult(diabeticRetinopathyData[predictedClass]);
+        setXaiImageUri(xaiImage); // Set the XAI image URI
 
       }
       setSelectedImage(null);
@@ -170,6 +178,23 @@ const AnalyseImage: React.FC = () => {
                       </View>
                     </View>
                   }
+                  <View style={styles.xaiContainer}>
+                    <Text style={styles.xaiHeading}>XAI Interpretation</Text>
+                    {xaiImageUri && (
+                      <View style={styles.xaiImageBorder} >
+                        <Image source={{ uri: xaiImageUri }} style={styles.xaiImage} />
+                      </View>
+                    )}
+                    <View style={styles.noteContainer}>
+                      <View style={styles.noteTextContainer}>
+                        <Text style={styles.noteHeading}>Note: </Text>
+                        <Text style={styles.noteText}>
+                          The blue areas in the XAI image indicate the regions that influenced the model's decision the most. These areas might show signs of swelling in blood vessels or other anomalies related to diabetic retinopathy. The red areas, on the other hand, are less significant in the decision-making process.
+                        </Text>
+                      </View>
+                    </View>
+                  </View>
+
                   <View style={styles.resultContainer}>
                     <View style={styles.resultWrapper}>
                       <Text style={[styles.resultAttentionText, { color: getAttentionTextColor() }]}>{descriptiveResult?.description}</Text>
