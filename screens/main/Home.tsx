@@ -1,15 +1,37 @@
-import { Input, PrimaryButton } from "component";
-import React from "react";
-import { Text, View, StyleSheet, Image, Button, Touchable, TouchableOpacity } from "react-native";
+import { Input, LineLoading, PrimaryButton } from "component";
+import React, { useEffect } from "react";
+import { Text, View, StyleSheet, Image, Button, Touchable, TouchableOpacity, ScrollView } from "react-native";
 import { icons, images } from "constants/paths";
 import { theme } from "constants/theme";
 import { navigate } from "@navigation/NavigationService";
+import ArticleList from "component/article/ArticleList";
+import { getAllArticles } from "service/article/articleService";
 
 const Home: React.FC = () => {
   const [searchText, setSearchText] = React.useState<string>("");
+  const [articles, setArticles] = React.useState<any[]>([]);
+  const [loading, setLoading] = React.useState<boolean>(false);
+
+  useEffect(() => {
+    // fetch articles
+    fetchArticles();
+  }, []);
+
+  const fetchArticles = async () => {
+    setLoading(true);
+    try {
+      // fetch articles
+      const response = await getAllArticles();
+      setArticles(response);
+    } catch (error) {
+      console.log(error);
+    }
+    setLoading(false);
+  }
+
 
   return (
-    <View style={styles.wrapper}>
+    <ScrollView style={styles.wrapper}>
       {/* header section */}
       <View style={styles.header}>
         <Text style={styles.attentionText}>Find your desire Eye health solution</Text>
@@ -58,14 +80,21 @@ const Home: React.FC = () => {
 
         </View>
         {/* articles section */}
-        <View>
-
+        <View style={styles.container}>
+          <Text>Articles</Text>
+          <ArticleList articles={articles} />
         </View>
       </View>
 
+      {
+        loading &&
+        <View>
+          <LineLoading />
+        </View>
+      }
 
 
-    </View>
+    </ScrollView>
   )
 };
 
@@ -75,6 +104,9 @@ const styles = StyleSheet.create({
     width: "100%",
     height: "100%",
     paddingHorizontal: 10,
+  },
+  container: {
+    backgroundColor: '#fff',
   },
   header: {
     display: "flex",

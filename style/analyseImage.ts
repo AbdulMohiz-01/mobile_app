@@ -161,19 +161,20 @@ export const styles = StyleSheet.create({
         flexDirection: "column",
         justifyContent: "center",
         alignItems: "center",
-        marginTop: 20,
         marginBottom: 20,
         padding: 20,
         paddingTop: 0,
-        backgroundColor: "#f5f5f5",
         borderRadius: 10,
-
     },
-    chartWrapper: {
+    pieChartWrapper: {
         width: 200,
         height: 200,
         alignSelf: "center",
         padding: 20,
+    },
+    barChartWrapper: {
+        width: 200,
+        height: 200,
     },
     legendsWrapper: {
         display: "flex",
@@ -185,10 +186,11 @@ export const styles = StyleSheet.create({
     legend: {
         fontSize: 12,
         fontWeight: "bold",
+        color: "#fff",
     },
     legendValue: {
         fontSize: 12,
-        color: "gray",
+        color: "#C0C0C0",
     },
     legendRow: {
         display: "flex",
@@ -203,10 +205,10 @@ export const styles = StyleSheet.create({
     },
     boldText: {
         fontWeight: "bold",
-        color: "black",
+        color: "#07f49e",
     },
     nullclass: {
-        color: "gray",
+        color: "#C0C0C0",
     },
     xaiContainer: {
         display: "flex",
@@ -234,6 +236,56 @@ export const styles = StyleSheet.create({
         height: 200,
         marginBottom: 10,
     },
+    gradientBackground: {
+        flex: 1,
+        width: '100%',
+        padding: 20,
+        borderRadius: 20,
+        // give some elevation
+        shadowColor: "#000",
+        shadowOffset: {
+            width: 0,
+            height: 2,
+        },
+        shadowOpacity: 0.25,
+        shadowRadius: 3.84,
+        elevation: 5,
+    },
+    chartHeadingWrapper: {
+        display: 'flex',
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        alignItems: 'center',
+    },
+    chartHeading: {
+        fontSize: 18,
+        fontWeight: 'bold',
+        color: 'white',
+    },
+    chartButtonsContainer: {
+        flexDirection: 'row',
+    },
+    chartButton: {
+        width: 40,
+        height: 40,
+        borderRadius: 20,
+        justifyContent: 'center',
+        alignItems: 'center',
+        marginLeft: 10,
+        backgroundColor: '#fff',
+        elevation: 3, // For shadow on Android
+        shadowColor: '#000', // For shadow on iOS
+        shadowOffset: { width: 0, height: 2 },
+        shadowOpacity: 0.3,
+        shadowRadius: 3,
+    },
+    activeChartButton: {
+        backgroundColor: '#ddd',
+    },
+    chartButtonIcon: {
+        width: 24,
+        height: 24,
+    },
     noteContainer: {
         flexDirection: 'row',
         backgroundColor: '#eaf4ff',
@@ -259,6 +311,13 @@ export const styles = StyleSheet.create({
         lineHeight: 20,
         color: '#333',
     },
+    xaiImage1: {
+        width: 200,
+        height: 200,
+        alignSelf: 'center',
+        borderRadius: 10,
+        marginBottom: 10
+    }
 
 
 

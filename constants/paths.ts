@@ -20,6 +20,8 @@ export const icons: { [key: string]: any } = {
     profileImageUpload: require('assets/icons/profile-image-upload.png'),
     arrowRight: require('assets/icons/arrow-right.png'),
     info: require('assets/icons/info.png'),
+    barChart: require('assets/icons/bar-chart.png'),
+    pieChart: require('assets/icons/pie-chart.png'),
 };
 
 export const loaders: { [key: string]: any } = {

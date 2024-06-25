@@ -6,8 +6,9 @@ import { icons, loaders } from "constants/paths";
 import { analyseImage } from "service/screens/analyseImageService";
 import { DiabeticRetinopathyResult, ServerResult, diabeticRetinopathyData } from "model/results";
 import { styles } from "style/analyseImage";
-import { PieChart } from "react-native-gifted-charts";
+import { PieChart, BarChart } from "react-native-gifted-charts"; // Assuming you're using this library
 import { getXaiImage } from "service/artifact/artifactService";
+import { LinearGradient } from "expo-linear-gradient";
 
 const AnalyseImage: React.FC = () => {
   const [selectedImage, setSelectedImage] = useState(null);
@@ -15,7 +16,9 @@ const AnalyseImage: React.FC = () => {
   const [result, setResult] = useState<ServerResult | null>(null);
   const [descriptiveResult, setDescriptiveResult] = useState<DiabeticRetinopathyResult | null>(null);
   const [pieChartData, setPieChartData] = useState([]);
+  const [barChartData, setBarChartData] = useState([]);
   const [xaiImageUri, setXaiImageUri] = useState<string | null>(null); // New state for XAI image
+  const [chartType, setChartType] = useState<'pie' | 'bar'>('pie'); // State to manage chart type
 
   const handleChooseImage = async () => {
     if (selectedImage) {
@@ -31,17 +34,21 @@ const AnalyseImage: React.FC = () => {
           predictons: response.data.predictions
         }))
         const predictedClass = response.data.predicted_class.toString();
-        setPieChartData([
+        const pieData = [
           { value: response.data.predictions[0], color: '#00ff00' },
           { value: response.data.predictions[1], color: '#e6e600' },
           { value: response.data.predictions[2], color: '#ff0000' },
-          { value: response.data.predictions[3], color: '#8b0000' },
-          { value: response.data.predictions[4], color: '#8b0000' }
-
-        ]);
+          { value: response.data.predictions[3], color: '#89060e' },
+          { value: response.data.predictions[4], color: '#87050d' }
+        ];
+        setPieChartData(pieData);
+        setBarChartData(pieData.map((item, index) => ({
+          value: item.value,
+          label: ['No Dr', 'Mild', 'Moderate', 'Severe', 'Proliferative'][index],
+          frontColor: item.color
+        })));
         setDescriptiveResult(diabeticRetinopathyData[predictedClass]);
         setXaiImageUri(xaiImage); // Set the XAI image URI
-
       }
       setSelectedImage(null);
       setIsAnalyzing(false);
@@ -73,20 +80,23 @@ const AnalyseImage: React.FC = () => {
     return "0%";
   }
 
-  function getAttentionTextColor() {
-    if (result?.class === "0" || result?.class === "1") {
-      return "#00ff00";
+  const getAttentionTextColor = () => {
+    switch (result?.class) {
+      case '0':
+        return "#00ff00"; // Light green
+      case '1':
+        return "#e6e600"; // Light green
+      case '2':
+        return "#ff0000"; // Light yellow
+      case '3':
+        return "#89060e"; // Light red
+      case '4':
+        return "#87050d"; // Dark red
+      default:
+        return "#000"; // Default color if none matches
     }
-    if (result?.class === "2") {
-      return "#e6e600";
-    }
-    if (result?.class === "3") {
-      return "#ff0000";
-    }
-    if (result?.class === "4") {
-      return "#8b0000";
-    }
-  }
+  };
+
   return (
     <ScrollView contentContainerStyle={styles.scrollViewContent}>
       <View style={styles.wrapper}>
@@ -143,46 +153,86 @@ const AnalyseImage: React.FC = () => {
               </View> : (
                 <View>
                   {
-                    pieChartData.length > 0 &&
-                    <View style={styles.chartContainer}>
-                      <View style={styles.chartWrapper}>
-                        <PieChart data={pieChartData} donut radius={80} />
+                    pieChartData.length > 0 && (
+                      <View style={styles.chartContainer}>
+                        <LinearGradient
+                          colors={['hsla(330, 36%, 53%, 1)', 'hsla(289, 68%, 19%, 1)']}
+                          start={{ x: 0, y: 0 }}
+                          end={{ x: 1, y: 0 }}
+                          style={styles.gradientBackground}
+                        >
+                          <View style={styles.chartHeadingWrapper}>
+                            <Text style={styles.chartHeading}>Predictions Chart</Text>
+                            <View style={styles.chartButtonsContainer}>
+                              <TouchableOpacity
+                                style={[styles.chartButton, chartType === 'pie' && styles.activeChartButton]}
+                                onPress={() => setChartType('pie')}
+                              >
+                                <Image source={icons.pieChart} style={styles.chartButtonIcon} />
+                              </TouchableOpacity>
+                              <TouchableOpacity
+                                style={[styles.chartButton, chartType === 'bar' && styles.activeChartButton]}
+                                onPress={() => setChartType('bar')}
+                              >
+                                <Image source={icons.barChart} style={styles.chartButtonIcon} />
+                              </TouchableOpacity>
+                            </View>
+                          </View>
+                          {chartType === 'pie' ? (
+                            <View style={styles.pieChartWrapper}>
+                              <PieChart data={pieChartData} radius={80} />
+                            </View>
+                          ) : (
+                            <View style={styles.barChartWrapper}>
+                              <BarChart data={pieChartData} />
+                            </View>
+                          )}
+                          <View style={styles.legendsWrapper}>
+                            <View>
+                              <Text style={[styles.legendColorBar, { backgroundColor: '#00ff00' }]}></Text>
+                              <Text style={styles.legend}>No Dr: </Text>
+                              <Text style={[styles.legendValue, result.class === '0' ? styles.boldText : styles.nullclass]}>
+                                {getPercentageOfPrediction(result.predictons[0])}
+                              </Text>
+                            </View>
+                            <View>
+                              <Text style={[styles.legendColorBar, { backgroundColor: '#e6e600' }]}></Text>
+                              <Text style={styles.legend}>Mild: </Text>
+                              <Text style={[styles.legendValue, result.class === '1' ? styles.boldText : styles.nullclass]}>
+                                {getPercentageOfPrediction(result.predictons[1])}
+                              </Text>
+                            </View>
+                            <View>
+                              <Text style={[styles.legendColorBar, { backgroundColor: '#ff0000' }]}></Text>
+                              <Text style={styles.legend}>Moderate: </Text>
+                              <Text style={[styles.legendValue, result.class === '2' ? styles.boldText : styles.nullclass]}>
+                                {getPercentageOfPrediction(result.predictons[2])}
+                              </Text>
+                            </View>
+                            <View>
+                              <Text style={[styles.legendColorBar, { backgroundColor: '#8b0000' }]}></Text>
+                              <Text style={styles.legend}>Severe: </Text>
+                              <Text style={[styles.legendValue, result.class === '3' ? styles.boldText : styles.nullclass]}>
+                                {getPercentageOfPrediction(result.predictons[3])}
+                              </Text>
+                            </View>
+                            <View>
+                              <Text style={[styles.legendColorBar, { backgroundColor: '#8b0000' }]}></Text>
+                              <Text style={styles.legend}>Proliferative: </Text>
+                              <Text style={[styles.legendValue, result.class === '4' ? styles.boldText : styles.nullclass]}>
+                                {getPercentageOfPrediction(result.predictons[4])}
+                              </Text>
+                            </View>
+                          </View>
+                        </LinearGradient>
                       </View>
-                      <View style={styles.legendsWrapper}>
-                        <View>
-                          <Text style={[styles.legendColorBar, { backgroundColor: '#00ff00' }]}></Text>
-                          <Text style={styles.legend}>No Dr: </Text>
-                          <Text style={[styles.legendValue, result.class == '0' ? styles.boldText : styles.nullclass]}>{getPercentageOfPrediction(result.predictons[0])}</Text>
-                        </View>
-                        <View >
-                          <Text style={[styles.legendColorBar, { backgroundColor: '#e6e600' }]}></Text>
-                          <Text style={styles.legend}>Mild: </Text>
-                          <Text style={[styles.legendValue, result.class == '1' ? styles.boldText : styles.nullclass]}>{getPercentageOfPrediction(result.predictons[1])}</Text>
-                        </View>
-                        <View>
-                          <Text style={[styles.legendColorBar, { backgroundColor: '#ff0000' }]}></Text>
-                          <Text style={styles.legend}>Moderate: </Text>
-                          <Text style={[styles.legendValue, result.class == '2' ? styles.boldText : styles.nullclass]}>{getPercentageOfPrediction(result.predictons[2])}</Text>
-                        </View>
-                        <View>
-                          <Text style={[styles.legendColorBar, { backgroundColor: '#8b0000' }]}></Text>
-                          <Text style={styles.legend}>Severe: </Text>
-                          <Text style={[styles.legendValue, result.class == '3' ? styles.boldText : styles.nullclass]}>{getPercentageOfPrediction(result.predictons[3])}</Text>
-                        </View>
-                        <View>
-                          <Text style={[styles.legendColorBar, { backgroundColor: '#8b0000' }]}></Text>
-                          <Text style={styles.legend}>Proliferative: </Text>
-                          <Text style={[styles.legendValue, result.class == '4' ? styles.boldText : styles.nullclass]}>{getPercentageOfPrediction(result.predictons[4])}</Text>
-                        </View>
-
-                      </View>
-                    </View>
+                    )
                   }
                   <View style={styles.xaiContainer}>
                     <Text style={styles.xaiHeading}>XAI Interpretation</Text>
                     {xaiImageUri && (
                       <View style={styles.xaiImageBorder} >
-                        <Image source={{ uri: xaiImageUri }} style={styles.xaiImage} />
+                        <Image source={{ uri: xaiImageUri }} style={[styles.xaiImage1]} />
                       </View>
                     )}
                     <View style={styles.noteContainer}>
@@ -220,7 +270,5 @@ const AnalyseImage: React.FC = () => {
     </ScrollView>
   );
 };
-
-
 
 export default AnalyseImage;

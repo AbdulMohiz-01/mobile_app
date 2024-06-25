@@ -49,6 +49,8 @@ const MainTabNavigator: React.FC = () => {
             iconSource = icons['home'];
           } else if (route.name === 'AnalyseImage') {
             iconSource = icons['search'];
+          } else if (route.name === 'ArticleDetail') {
+            iconSource = icons['article'];
           }
 
           // You can return any component that you like here!
