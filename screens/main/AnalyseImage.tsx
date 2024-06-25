@@ -129,7 +129,10 @@ const AnalyseImage: React.FC = () => {
           {selectedImage && (
             <View style={styles.selectedImageWrapper}>
               <Image source={{ uri: selectedImage.uri }} style={styles.selectedImage} />
-              <TouchableOpacity style={styles.deleteIcon} onPress={() => setSelectedImage(null)}>
+              <TouchableOpacity style={styles.deleteIcon} onPress={() => {
+                setSelectedImage(null);
+                setIsAnalyzing(false);
+              }}>
                 <Image source={icons.trash} style={styles.icon} />
               </TouchableOpacity>
             </View>

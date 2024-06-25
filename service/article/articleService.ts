@@ -1,4 +1,4 @@
-import { retrieveAllDocuments } from "service/firebase/firebaseService";
+import { getDocumentById, retrieveAllDocuments } from "service/firebase/firebaseService";
 import { Article } from "model/article";
 import { Collection } from "model/collection";
 
@@ -13,4 +13,14 @@ export const getAllArticles = async () => {
         }
         return arc;
     });
+}
+
+export const getArticle = async (articleId: string) => {
+    const article = await getDocumentById(Collection.Article, articleId);
+    if (article) {
+        const arc = article as Article;
+        console.log("this is fucking article", arc);
+        return arc;
+    }
+    return null;
 }

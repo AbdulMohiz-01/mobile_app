@@ -1,6 +1,6 @@
 import { User } from '../../model/user';
 import { db } from './firebaseConfig';
-import { collection, addDoc, getDocs, setDoc, doc, updateDoc } from 'firebase/firestore';
+import { collection, addDoc, getDocs, setDoc, doc, updateDoc, getDoc } from 'firebase/firestore';
 
 
 export const retrieveAllDocuments = async (collectionName: string) => {
@@ -33,7 +33,25 @@ export const addDocument = async (collectionName: string, data: object) => {
     return false;
   }
 };
+export const getDocumentById = async (collectionName: string, docId: string) => {
+  try {
+    const docRef = doc(db, collectionName, docId);
+    const docSnap = await getDoc(docRef);
 
+    if (docSnap.exists()) {
+      return {
+        ...docSnap.data(),
+        id: docSnap.id,
+      };
+    } else {
+      console.log('No such document!');
+      return null;
+    }
+  } catch (error) {
+    console.error('Error getting document:', error);
+    return null;
+  }
+};
 export const updateDocument = async (collectionName: string, docId: string, data: object) => {
   try {
     await updateDoc(doc(db, collectionName, docId), data);

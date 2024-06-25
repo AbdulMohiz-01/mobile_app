@@ -24,12 +24,12 @@ const UploadArticleComponent = () => {
 
     const handleSubmit = () => {
         const newArticle: Article = {
-            id: Date.now(),
+            id: '',
             title,
             content,
             author: user.name,
-            createdAt: new Date(),
-            updatedAt: new Date(),
+            createdAt: new Date().toString(),
+            updatedAt: new Date().toString(),
             tags,
             isPublished,
             category,

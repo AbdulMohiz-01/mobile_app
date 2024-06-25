@@ -8,6 +8,7 @@ import Dashboard from "@screens/main/Profile";
 import { icons } from "constants/paths";
 import Profile from "@screens/main/Profile";
 import EditProfile from "@screens/main/EditProfile";
+import ViewArticle from "component/article/ViewArticle";
 
 // Define the type for the root stack param list
 type RootStackParamList = {
@@ -74,6 +75,7 @@ const MainTabNavigator: React.FC = () => {
       <Tab.Screen name="Home" component={HomeScreen} />
       <Tab.Screen name="AnalyseImage" component={AnalyseImage} />
       <Tab.Screen name="Profile" component={Profile} />
+      <Tab.Screen name="ArticleDetail" component={ViewArticle} />
     </Tab.Navigator>
   );
 };
