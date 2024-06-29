@@ -52,7 +52,9 @@ const ViewArticle: React.FC<Props> = ({ navigation, route }) => {
         );
       } else {
         return part.split('\n').map((paragraph, paraIndex) => (
-          <Text key={paraIndex} style={styles.paragraph}>{paragraph}</Text>
+          <Text key={paraIndex} style={styles.paragraph}>
+            {paragraph}
+          </Text>
         ));
       }
     });
@@ -65,7 +67,7 @@ const ViewArticle: React.FC<Props> = ({ navigation, route }) => {
         <Text style={styles.category}>{article.category}</Text>
         <Text style={styles.title}>{article.title}</Text>
         <Text style={styles.author}>By {article.author}</Text>
-        <Text style={styles.date}>{new Date(article.createdAt).toLocaleDateString()} • {article.totalReadTime} min read</Text>
+        <Text style={styles.date}>{article.createdAt} • {article.totalReadTime} min read</Text>
         <View style={styles.tagsContainer}>
           {article.tags.map((tag: string, index: number) => (
             <Chip key={index} style={styles.tag}>{tag}</Chip>
@@ -136,6 +138,7 @@ const styles = StyleSheet.create({
     fontSize: 16,
     lineHeight: 24,
     marginBottom: 10,
+    textAlign: 'justify',
   },
   noteContainer: {
     backgroundColor: '#f0f8ff',

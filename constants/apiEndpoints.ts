@@ -5,6 +5,7 @@ const API_ENDPOINTS = {
   preprocess: Retina + "/preprocess",
   ping: Retina + "/ping",
   xai: Retina + "/xai",
+  genai: Retina + "/genai",
 };
 
 export default API_ENDPOINTS;

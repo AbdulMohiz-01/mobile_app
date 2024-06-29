@@ -1,10 +1,6 @@
 import React from "react";
-import {
-  View,
-  Text,
-  StyleSheet,
-  TouchableOpacity,
-} from "react-native";
+import { View, Text, StyleSheet, TouchableOpacity } from "react-native";
+import { GoogleSignin, statusCodes } from '@react-native-google-signin/google-signin';
 import { navigate } from "navigation/NavigationService";
 import { Login, invalidLoginAlert } from "service/screens/loginService";
 import { PrimaryButton, Input, IconButton, LineLoading } from "component";
@@ -15,6 +11,12 @@ import { login } from "redux/slice/userSlice";
 import store from "redux/store";
 import { useDispatch, useSelector } from "react-redux";
 
+// Initialize Google Sign-In
+// GoogleSignin.configure({
+//   webClientId: 'YOUR_WEB_CLIENT_ID.apps.googleusercontent.com', // From Google Cloud Console
+//   offlineAccess: true, // if you want to access Google API on behalf of the user FROM YOUR SERVER
+// });
+
 const LoginScreen: React.FC = () => {
   const [data, setData] = React.useState({
     email: "",
@@ -23,9 +25,10 @@ const LoginScreen: React.FC = () => {
   const dispatch = useDispatch();
   const [showPassword, setShowPassword] = React.useState(true);
   const [loading, setLoading] = React.useState(false);
+
   const toggleSecureTextEntry = () => {
     setShowPassword(!showPassword);
-  }
+  };
 
   const handleLogin = async () => {
     navigate("MainStack", {});
@@ -51,6 +54,29 @@ const LoginScreen: React.FC = () => {
   };
 
   const handleGoogleLogin = async () => {
+    // try {
+    //   await GoogleSignin.hasPlayServices();
+    //   const userInfo = await GoogleSignin.signIn();
+    //   // You can dispatch a login action here or navigate to the main screen
+    //   // Example:
+    //   // dispatch(login({ user: userInfo }));
+    //   // navigate("MainStack", {});
+    //   console.log(userInfo)
+    // } catch (error) {
+    //   if (error.code === statusCodes.SIGN_IN_CANCELLED) {
+    //     // user cancelled the login flow
+    //     console.log('User cancelled the login');
+    //   } else if (error.code === statusCodes.IN_PROGRESS) {
+    //     // operation (e.g. sign in) is in progress already
+    //     console.log('Sign in is in progress');
+    //   } else if (error.code === statusCodes.PLAY_SERVICES_NOT_AVAILABLE) {
+    //     // play services not available or outdated
+    //     console.log('Play services not available or outdated');
+    //   } else {
+    //     // some other error happened
+    //     console.error(error);
+    //   }
+    // }
   };
 
   return (
@@ -80,11 +106,9 @@ const LoginScreen: React.FC = () => {
         <Text style={styles.forgot}>Forgot Password?</Text>
       </TouchableOpacity>
       <PrimaryButton text={loading ? "Logging in..." : "Login"} isLoading={loading} disable={loading} onClick={handleLogin} width={null} />
-      {/* dont have an account sign up */}
+      {/* don't have an account sign up */}
       <View style={styles.signUpContainer}>
-        <Text>
-          Don't have an account?
-        </Text>
+        <Text>Don't have an account?</Text>
         <TouchableOpacity onPress={() => navigate("Signup", {})}>
           <Text style={styles.signUpLink}>Sign Up</Text>
         </TouchableOpacity>
@@ -108,7 +132,6 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     alignItems: "center",
-    // justifyContent: "center",
     backgroundColor: "#fff",
   },
   welcome: {
@@ -119,10 +142,6 @@ const styles = StyleSheet.create({
   },
   inputView: {
     marginTop: 10,
-  },
-  inputText: {
-    height: 50,
-    color: "#333",
   },
   forgotContainer: {
     width: "80%",
@@ -145,40 +164,12 @@ const styles = StyleSheet.create({
     color: theme.primary_color,
     marginLeft: 5,
   },
-  loginBtn: {
-    width: "80%",
-    backgroundColor: "#fb5b5a",
-    borderRadius: 25,
-    height: 50,
-    alignItems: "center",
-    justifyContent: "center",
-    marginTop: 20,
-    marginBottom: 10,
-  },
-  loginText: {
-    color: "#fff",
-    fontWeight: "bold",
-  },
   or: {
     color: "#a0a7b0",
     marginTop: 10,
     marginBottom: 10,
     fontSize: 12,
   },
-  googleBtn: {
-    width: "80%",
-    backgroundColor: "#4285f4",
-    borderRadius: 25,
-    height: 50,
-    alignItems: "center",
-    justifyContent: "center",
-    marginTop: 10,
-  },
-  googleText: {
-    color: "#fff",
-    fontWeight: "bold",
-  },
-
 });
 
 export default LoginScreen;

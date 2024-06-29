@@ -1,6 +1,6 @@
 import { images } from "constants/paths";
 import React, { useState } from "react";
-import { Text, View, StyleSheet, Image, TouchableOpacity, Platform, ScrollView } from "react-native";
+import { Text, View, StyleSheet, Image, TouchableOpacity, Platform, ScrollView, Alert } from "react-native";
 import * as ImagePicker from 'expo-image-picker';
 import { icons, loaders } from "constants/paths";
 import { analyseImage } from "service/screens/analyseImageService";
@@ -9,6 +9,8 @@ import { styles } from "style/analyseImage";
 import { PieChart, BarChart } from "react-native-gifted-charts"; // Assuming you're using this library
 import { getXaiImage } from "service/artifact/artifactService";
 import { LinearGradient } from "expo-linear-gradient";
+import { getContentFromGemini } from "service/gemini/gemini";
+import CustomAlert from "component/alerts/CustomeAlert";
 
 const AnalyseImage: React.FC = () => {
   const [selectedImage, setSelectedImage] = useState(null);
@@ -19,13 +21,20 @@ const AnalyseImage: React.FC = () => {
   const [barChartData, setBarChartData] = useState([]);
   const [xaiImageUri, setXaiImageUri] = useState<string | null>(null); // New state for XAI image
   const [chartType, setChartType] = useState<'pie' | 'bar'>('pie'); // State to manage chart type
-
+  const [isAlertVisible, setIsAlertVisible] = useState(false);
   const handleChooseImage = async () => {
     if (selectedImage) {
       setIsAnalyzing(true);
       const response = await analyseImage(selectedImage);
 
       if (response.status) {
+        // check if its a valid class
+        if (response.data.predicted_class === '5') {
+          setIsAnalyzing(false);
+          Alert.alert("Invalid Image", "The image you uploaded is not a valid retinal image. Please upload a valid retinal image and try again.");
+          // setIsAlertVisible(true);
+          return;
+        }
         const xaiImage = await getXaiImage();
         setResult(prevState => ({
           ...prevState,
@@ -47,7 +56,8 @@ const AnalyseImage: React.FC = () => {
           label: ['No Dr', 'Mild', 'Moderate', 'Severe', 'Proliferative'][index],
           frontColor: item.color
         })));
-        setDescriptiveResult(diabeticRetinopathyData[predictedClass]);
+        const descriptiveData = await getContentFromGemini("No Diabetic Retinopathy");
+        setDescriptiveResult(descriptiveData[0]);
         setXaiImageUri(xaiImage); // Set the XAI image URI
       }
       setSelectedImage(null);
@@ -113,6 +123,8 @@ const AnalyseImage: React.FC = () => {
             <Image source={images.sample2} style={styles.sampleImage} />
           </View>
         </View>
+
+        <CustomAlert isVisible={isAlertVisible} onClose={() => setIsAlertVisible(false)} />
 
         <View style={styles.uploadWrapper}>
           {

@@ -1,40 +1,49 @@
-import { Input, LineLoading, PrimaryButton } from "component";
-import React, { useEffect } from "react";
-import { Text, View, StyleSheet, Image, Button, Touchable, TouchableOpacity, ScrollView } from "react-native";
+import React, { useEffect, useState } from "react";
+import {
+  Text,
+  View,
+  StyleSheet,
+  Image,
+  TouchableOpacity,
+  ScrollView,
+  ActivityIndicator,
+} from "react-native";
 import { icons, images } from "constants/paths";
 import { theme } from "constants/theme";
 import { navigate } from "@navigation/NavigationService";
 import ArticleList from "component/article/ArticleList";
 import { getAllArticles } from "service/article/articleService";
+import { Input } from "component";
 
 const Home: React.FC = () => {
-  const [searchText, setSearchText] = React.useState<string>("");
-  const [articles, setArticles] = React.useState<any[]>([]);
-  const [loading, setLoading] = React.useState<boolean>(false);
+  const [searchText, setSearchText] = useState<string>("");
+  const [articles, setArticles] = useState<any[]>([]);
+  const [loading, setLoading] = useState<boolean>(false);
+  const [error, setError] = useState<boolean>(false);
 
   useEffect(() => {
-    // fetch articles
     fetchArticles();
   }, []);
 
   const fetchArticles = async () => {
     setLoading(true);
+    setError(false);
     try {
-      // fetch articles
       const response = await getAllArticles();
       setArticles(response);
     } catch (error) {
-      console.log(error);
+      setError(true);
     }
     setLoading(false);
-  }
-
+  };
 
   return (
     <ScrollView style={styles.wrapper}>
       {/* header section */}
       <View style={styles.header}>
-        <Text style={styles.attentionText}>Find your desire Eye health solution</Text>
+        <Text style={styles.attentionText}>
+          Find your desired eye health solution
+        </Text>
         <Image source={icons.bell} style={styles.icon} />
       </View>
       {/* search section */}
@@ -48,9 +57,9 @@ const Home: React.FC = () => {
         />
       </View>
 
-      {/* search results container */}
+      {/* navigation container */}
       <View style={styles.navigationContainer}>
-        <TouchableOpacity onPress={() => navigate('AnalyseImage', {})}>
+        <TouchableOpacity onPress={() => navigate("AnalyseImage", {})}>
           <View style={styles.navChilds}>
             <Image source={icons.eyeOpen} style={styles.navIcon} />
             <Text style={styles.navChildText}>Retinopathy</Text>
@@ -74,47 +83,42 @@ const Home: React.FC = () => {
       </View>
 
       {/* health articles */}
-      <View>
-        {/* header for articeles */}
-        <View>
-
+      <View style={styles.articleSection}>
+        <View style={styles.articleHeader}>
+          <Text style={styles.articleTitle}>Health Articles</Text>
         </View>
-        {/* articles section */}
-        <View style={styles.container}>
-          <Text>Articles</Text>
+        {loading ? (
+          <ActivityIndicator size="large" color={theme.primary_color} />
+        ) : error ? (
+          <View style={styles.errorContainer}>
+            <Text style={styles.errorText}>Failed to load articles.</Text>
+            <TouchableOpacity onPress={fetchArticles} style={styles.retryButton}>
+              <Text style={styles.retryButtonText}>Retry</Text>
+            </TouchableOpacity>
+          </View>
+        ) : (
           <ArticleList articles={articles} />
-        </View>
+        )}
       </View>
-
-      {
-        loading &&
-        <View>
-          <LineLoading />
-        </View>
-      }
-
-
     </ScrollView>
-  )
+  );
 };
 
 const styles = StyleSheet.create({
   wrapper: {
-    backgroundColor: "#ffff",
+    backgroundColor: "#fff",
     width: "100%",
     height: "100%",
     paddingHorizontal: 10,
   },
   container: {
-    backgroundColor: '#fff',
+    backgroundColor: "#fff",
   },
   header: {
-    display: "flex",
     flexDirection: "row",
-    justifyContent: "space-around",
+    justifyContent: "space-between",
     alignItems: "center",
-    // marginVertical: 20,
-    gap: 10,
+    marginVertical: 20,
   },
   attentionText: {
     width: "70%",
@@ -123,28 +127,22 @@ const styles = StyleSheet.create({
     color: "#333",
   },
   icon: {
-    width: 15,
-    height: 15,
+    width: 25,
+    height: 25,
   },
   search: {
     marginTop: 20,
-    marginHorizontal: 10,
     width: "100%",
   },
   navigationContainer: {
     marginTop: 20,
-    marginHorizontal: 10,
-    display: "flex",
     flexDirection: "row",
     justifyContent: "space-between",
     flexWrap: "wrap",
   },
   navChilds: {
-    display: "flex",
     alignItems: "center",
-    justifyContent: "center",
     marginBottom: 10,
-    gap: 5,
   },
   navIcon: {
     width: 30,
@@ -152,27 +150,19 @@ const styles = StyleSheet.create({
   },
   navChildText: {
     fontSize: 14,
-    // give it a little dim color
     color: "#9fa6af",
   },
   bannerWrapper: {
     marginTop: 20,
-    marginHorizontal: 10,
-    display: "flex",
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
     padding: 20,
     backgroundColor: "#e8f3f1",
     borderRadius: 10,
-
   },
   bannerLeftChild: {
     width: "60%",
-    display: "flex",
-    flexDirection: "column",
-    alignItems: "flex-start",
-    gap: 10,
   },
   bannerRightChild: {
     width: "40%",
@@ -181,28 +171,54 @@ const styles = StyleSheet.create({
     width: 100,
     height: 100,
     borderRadius: 10,
-    // set the image to cover
     resizeMode: "cover",
-
   },
   bannerLeftChildText: {
     fontSize: 16,
     fontWeight: "bold",
     color: "#333",
-    width: "100%",
   },
   bannerButton: {
     backgroundColor: theme.primary_color,
     padding: 10,
     borderRadius: 999,
-    width: 100,
-    display: "flex",
     alignItems: "center",
+    marginTop: 10,
   },
   buttonText: {
     color: "#fff",
     fontWeight: "bold",
-  }
+  },
+  articleSection: {
+    marginTop: 20,
+    paddingHorizontal: 10,
+  },
+  articleHeader: {
+    marginBottom: 10,
+  },
+  articleTitle: {
+    fontSize: 20,
+    fontWeight: "bold",
+    color: "#333",
+  },
+  errorContainer: {
+    alignItems: "center",
+    marginVertical: 20,
+  },
+  errorText: {
+    color: "#f00",
+    fontSize: 16,
+    marginBottom: 10,
+  },
+  retryButton: {
+    backgroundColor: theme.primary_color,
+    padding: 10,
+    borderRadius: 999,
+  },
+  retryButtonText: {
+    color: "#fff",
+    fontWeight: "bold",
+  },
 });
 
 export default Home;

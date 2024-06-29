@@ -317,7 +317,25 @@ export const styles = StyleSheet.create({
         alignSelf: 'center',
         borderRadius: 10,
         marginBottom: 10
-    }
+    },
+    invalidImageContainer: {
+        display: 'flex',
+        flexDirection: 'column',
+        justifyContent: 'center',
+        alignItems: 'center',
+        marginTop: 20,
+        marginBottom: 20,
+        padding: 20,
+        paddingTop: 0,
+        backgroundColor: "#f5f5f5",
+        borderRadius: 10,
+    },
+
+    invalidImageText: {
+        fontSize: 16,
+        fontWeight: 'bold',
+        color: 'red',
+    },
 
 
 
