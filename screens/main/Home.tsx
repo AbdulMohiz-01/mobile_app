@@ -5,8 +5,8 @@ import {
   StyleSheet,
   Image,
   TouchableOpacity,
-  ScrollView,
   ActivityIndicator,
+  FlatList,
 } from "react-native";
 import { icons, images } from "constants/paths";
 import { theme } from "constants/theme";
@@ -37,70 +37,106 @@ const Home: React.FC = () => {
     setLoading(false);
   };
 
-  return (
-    <ScrollView style={styles.wrapper}>
-      {/* header section */}
-      <View style={styles.header}>
-        <Text style={styles.attentionText}>
-          Find your desired eye health solution
-        </Text>
-        <Image source={icons.bell} style={styles.icon} />
-      </View>
-      {/* search section */}
-      <View style={styles.search}>
-        <Input
-          value={searchText}
-          onChangeText={(value) => setSearchText(value)}
-          placeholder="Search eye disease, articles..."
-          beforeIcon="search"
-          width="100%"
-        />
-      </View>
+  const renderHeader = () => (
+    <View style={styles.header}>
+      <Text style={styles.attentionText}>
+        Find your desired eye health solution
+      </Text>
+      <Image source={icons.bell} style={styles.icon} />
+    </View>
+  );
 
-      {/* navigation container */}
-      <View style={styles.navigationContainer}>
-        <TouchableOpacity onPress={() => navigate("AnalyseImage", {})}>
-          <View style={styles.navChilds}>
-            <Image source={icons.eyeOpen} style={styles.navIcon} />
-            <Text style={styles.navChildText}>Retinopathy</Text>
-          </View>
+  const renderSearch = () => (
+    <View style={styles.search}>
+      <Input
+        value={searchText}
+        onChangeText={(value) => setSearchText(value)}
+        placeholder="Search eye disease, articles..."
+        beforeIcon="search"
+        width="100%"
+      />
+    </View>
+  );
+
+  const renderNavigation = () => (
+    <View style={styles.navigationContainer}>
+      <TouchableOpacity onPress={() => navigate("AnalyseImage", {})}>
+        <View style={styles.navChilds}>
+          <Image source={icons.eyeOpen} style={styles.navIcon} />
+          <Text style={styles.navChildText}>Retinopathy</Text>
+        </View>
+      </TouchableOpacity>
+    </View>
+  );
+
+  const renderBanner = () => (
+    <View style={styles.bannerWrapper}>
+      <View style={styles.bannerLeftChild}>
+        <Text style={styles.bannerLeftChildText}>
+          Early protection for your family's eye health.
+        </Text>
+        <TouchableOpacity style={styles.bannerButton}>
+          <Text style={styles.buttonText}>Learn More</Text>
         </TouchableOpacity>
       </View>
+      <View style={styles.bannerRightChild}>
+        <Image source={images.homeBannerImage} style={styles.bannerImage} />
+      </View>
+    </View>
+  );
 
-      {/* banner */}
-      <View style={styles.bannerWrapper}>
-        <View style={styles.bannerLeftChild}>
-          <Text style={styles.bannerLeftChildText}>
-            Early protection for your family's eye health.
-          </Text>
-          <TouchableOpacity style={styles.bannerButton}>
-            <Text style={styles.buttonText}>Learn More</Text>
+  const renderArticles = () => (
+    <View style={styles.articleSection}>
+      <View style={styles.articleHeader}>
+        <Text style={styles.articleTitle}>Health Articles</Text>
+      </View>
+      {loading ? (
+        <ActivityIndicator size="large" color={theme.primary_color} />
+      ) : error ? (
+        <View style={styles.errorContainer}>
+          <Text style={styles.errorText}>Failed to load articles.</Text>
+          <TouchableOpacity onPress={fetchArticles} style={styles.retryButton}>
+            <Text style={styles.retryButtonText}>Retry</Text>
           </TouchableOpacity>
         </View>
-        <View style={styles.bannerRightChild}>
-          <Image source={images.homeBannerImage} style={styles.bannerImage} />
-        </View>
-      </View>
+      ) : (
+        <ArticleList articles={articles} />
+      )}
+    </View>
+  );
 
-      {/* health articles */}
-      <View style={styles.articleSection}>
-        <View style={styles.articleHeader}>
-          <Text style={styles.articleTitle}>Health Articles</Text>
-        </View>
-        {loading ? (
-          <ActivityIndicator size="large" color={theme.primary_color} />
-        ) : error ? (
-          <View style={styles.errorContainer}>
-            <Text style={styles.errorText}>Failed to load articles.</Text>
-            <TouchableOpacity onPress={fetchArticles} style={styles.retryButton}>
-              <Text style={styles.retryButtonText}>Retry</Text>
-            </TouchableOpacity>
-          </View>
-        ) : (
-          <ArticleList articles={articles} />
-        )}
-      </View>
-    </ScrollView>
+  const renderItem = ({ item }: any) => {
+    switch (item.key) {
+      case "header":
+        return renderHeader();
+      case "search":
+        return renderSearch();
+      case "navigation":
+        return renderNavigation();
+      case "banner":
+        return renderBanner();
+      case "articles":
+        return renderArticles();
+      default:
+        return null;
+    }
+  };
+
+  const sections = [
+    { key: "header" },
+    { key: "search" },
+    { key: "navigation" },
+    { key: "banner" },
+    { key: "articles" },
+  ];
+
+  return (
+    <FlatList
+      data={sections}
+      renderItem={renderItem}
+      keyExtractor={(item) => item.key}
+      style={styles.wrapper}
+    />
   );
 };
 
@@ -131,6 +167,7 @@ const styles = StyleSheet.create({
     height: 25,
   },
   search: {
+    display: "flex",
     marginTop: 20,
     width: "100%",
   },
@@ -184,6 +221,7 @@ const styles = StyleSheet.create({
     borderRadius: 999,
     alignItems: "center",
     marginTop: 10,
+    width: 120,
   },
   buttonText: {
     color: "#fff",

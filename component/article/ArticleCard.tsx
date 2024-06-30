@@ -22,7 +22,7 @@ const ArticleCard: React.FC<ArticleCardProps> = ({ article }) => {
                 <Card.Cover source={{ uri: article.displayImage }} />
                 <Card.Content>
                     <Chip style={styles.chip}>{article.category}</Chip>
-                    <Title>{article.title}</Title>
+                    <Title style={styles.title}>{article.title}</Title>
                     <Paragraph>{article.createdAt} • {article.totalReadTime} min read</Paragraph>
                 </Card.Content>
             </Card>
@@ -39,6 +39,9 @@ const styles = StyleSheet.create({
         right: 5,
         top: 5,
     },
+    title: {
+        maxWidth: '90%',
+    }
 });
 
 export default ArticleCard;
