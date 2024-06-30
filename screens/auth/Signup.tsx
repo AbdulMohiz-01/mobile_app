@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { View, Text, StyleSheet, TouchableOpacity } from "react-native";
+import { View, Text, StyleSheet, TouchableOpacity, ScrollView, KeyboardAvoidingView, Platform } from "react-native";
 import { navigate } from "navigation/NavigationService";
 import { PrimaryButton, Input, ErrorModal } from "component";
 import { theme } from "constants/theme";
@@ -93,74 +93,82 @@ const SignupScreen: React.FC = () => {
   };
 
   return (
-    <View style={styles.container}>
-      <Text style={styles.title}>Sign Up</Text>
-      <View style={styles.inputView}>
-        <Input
-          value={formData.name}
-          onChangeText={(value) => setFormData({ ...formData, name: value })}
-          placeholder="Enter your name"
-          beforeIcon="user"
-          isValid={!errors.name}
-          onBlur={() => validateField("name", formData.name)}
-        />
-        {errors.name ? <Text style={styles.error}>{errors.name}</Text> : null}
-      </View>
-      <View style={styles.inputView}>
-        <Input
-          value={formData.email}
-          onChangeText={(value) => setFormData({ ...formData, email: value })}
-          placeholder="Enter your email"
-          beforeIcon="email"
-          isValid={!errors.email}
-          onBlur={() => validateField("email", formData.email)}
-        />
-        {errors.email ? <Text style={styles.error}>{errors.email}</Text> : null}
-      </View>
-      <View style={styles.inputView}>
-        <Input
-          value={formData.password}
-          onChangeText={(value) => setFormData({ ...formData, password: value })}
-          placeholder="Enter your password"
-          secureTextEntry={showPassword}
-          beforeIcon="password"
-          afterIcon="eye"
-          toggleSecureTextEntry={toggleShowPassword}
-          isPassword={true}
-        />
-        {errors.password ? <Text style={styles.error}>{errors.password}</Text> : null}
-      </View>
-      <View style={styles.inputView}>
-        <Input
-          value={formData.confirmPassword}
-          onChangeText={(value) => setFormData({ ...formData, confirmPassword: value })}
-          placeholder="Confirm Password"
-          secureTextEntry={showPassword}
-          beforeIcon="password"
-          isValid={!errors.confirmPassword}
-          isPassword={true}
-        />
-        {errors.confirmPassword ? <Text style={styles.error}>{errors.confirmPassword}</Text> : null}
-      </View>
+    <KeyboardAvoidingView style={styles.container} behavior={Platform.OS === "ios" ? "padding" : "height"}>
+      <ScrollView contentContainerStyle={styles.scrollContainer}>
+        <Text style={styles.title}>Sign Up</Text>
+        <View style={styles.inputView}>
+          <Input
+            value={formData.name}
+            onChangeText={(value) => setFormData({ ...formData, name: value })}
+            placeholder="Enter your name"
+            beforeIcon="user"
+            isValid={!errors.name}
+            onBlur={() => validateField("name", formData.name)}
+          />
+          {errors.name ? <Text style={styles.error}>{errors.name}</Text> : null}
+        </View>
+        <View style={styles.inputView}>
+          <Input
+            value={formData.email}
+            onChangeText={(value) => setFormData({ ...formData, email: value })}
+            placeholder="Enter your email"
+            beforeIcon="email"
+            isValid={!errors.email}
+            onBlur={() => validateField("email", formData.email)}
+          />
+          {errors.email ? <Text style={styles.error}>{errors.email}</Text> : null}
+        </View>
+        <View style={styles.inputView}>
+          <Input
+            value={formData.password}
+            onChangeText={(value) => setFormData({ ...formData, password: value })}
+            placeholder="Enter your password"
+            secureTextEntry={showPassword}
+            beforeIcon="password"
+            afterIcon="eye"
+            toggleSecureTextEntry={toggleShowPassword}
+            isPassword={true}
+          />
+          {errors.password ? <Text style={styles.error}>{errors.password}</Text> : null}
+        </View>
+        <View style={styles.inputView}>
+          <Input
+            value={formData.confirmPassword}
+            onChangeText={(value) => setFormData({ ...formData, confirmPassword: value })}
+            placeholder="Confirm Password"
+            secureTextEntry={showPassword}
+            beforeIcon="password"
+            isValid={!errors.confirmPassword}
+            isPassword={true}
+          />
+          {errors.confirmPassword ? <Text style={styles.error}>{errors.confirmPassword}</Text> : null}
+        </View>
+        <View style={styles.hiddenSpace}></View>
+        <PrimaryButton text={buttonText} onClick={handleSignup} width={null} disable={buttonText !== "Sign Up"} />
+        <TouchableOpacity onPress={() => navigate("Login", {})}>
+          <Text style={styles.link}>Already have an account? Login</Text>
+        </TouchableOpacity>
 
-      <PrimaryButton text={buttonText} onClick={handleSignup} width={null} disable={buttonText == "Sign Up" ? false : true} />
-      <TouchableOpacity onPress={() => navigate("Login", {})}>
-        <Text style={styles.link}>Already have an account? Login</Text>
-      </TouchableOpacity>
-
-      {/* {
-        !showModal && <ErrorModal text={"Signup failed"} dismissText={"OK"} onDismiss={() => setShowModal(false)} />
-      } */}
-    </View>
+        {/* {
+          showModal && <ErrorModal text={"Signup failed"} dismissText={"OK"} onDismiss={() => setShowModal(false)} />
+        } */}
+      </ScrollView>
+    </KeyboardAvoidingView>
   );
 };
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    backgroundColor: "#fff",
+  },
+  scrollContainer: {
+    flexGrow: 1,
     justifyContent: "center",
     alignItems: "center",
-    backgroundColor: "#fff",
+  },
+  hiddenSpace: {
+    height: 20,
   },
   title: {
     fontSize: 24,

@@ -1,21 +1,15 @@
-import React from "react";
-import { View, Text, StyleSheet, TouchableOpacity } from "react-native";
-import { GoogleSignin, statusCodes } from '@react-native-google-signin/google-signin';
+import React, { useEffect } from "react";
+import { View, Text, StyleSheet, TouchableOpacity, Alert } from "react-native";
 import { navigate } from "navigation/NavigationService";
 import { Login, invalidLoginAlert } from "service/screens/loginService";
 import { PrimaryButton, Input, IconButton, LineLoading } from "component";
 import { theme } from "constants/theme";
 import { Response } from "model/response";
 import { Role } from "model/role";
-import { login } from "redux/slice/userSlice";
-import store from "redux/store";
+import { login, loadUserFromStorage } from "redux/slice/userSlice";
 import { useDispatch, useSelector } from "react-redux";
-
-// Initialize Google Sign-In
-// GoogleSignin.configure({
-//   webClientId: 'YOUR_WEB_CLIENT_ID.apps.googleusercontent.com', // From Google Cloud Console
-//   offlineAccess: true, // if you want to access Google API on behalf of the user FROM YOUR SERVER
-// });
+import { RootState } from "redux/store";
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const LoginScreen: React.FC = () => {
   const [data, setData] = React.useState({
@@ -23,6 +17,7 @@ const LoginScreen: React.FC = () => {
     password: "",
   });
   const dispatch = useDispatch();
+  const user = useSelector((state: RootState) => state.user.user); // Select user from Redux state
   const [showPassword, setShowPassword] = React.useState(true);
   const [loading, setLoading] = React.useState(false);
 
@@ -30,53 +25,58 @@ const LoginScreen: React.FC = () => {
     setShowPassword(!showPassword);
   };
 
+  useEffect(() => {
+    const loadUserFromStorageAsync = async () => {
+      try {
+        const userData = await AsyncStorage.getItem('user');
+        if (userData) {
+          dispatch(loadUserFromStorage({ user: JSON.parse(userData) }));
+        }
+      } catch (error) {
+        console.error('Failed to load user data from storage:', error);
+      }
+    };
+
+    loadUserFromStorageAsync();
+
+    if (user) {
+      navigate("MainStack", {});
+    }
+  }, [user, dispatch]);
+
   const handleLogin = async () => {
-    navigate("MainStack", {});
+    if (!data.email || !data.password) {
+      Alert.alert("Error", "Email and password are required.");
+      return;
+    }
 
-    // if (!data.email || !data.password) {
-    //   return;
-    // }
-    // setLoading(true);
-    // let response: Response = await Login(data.email, data.password);
+    setLoading(true);
 
-    // if (response.status && response.data.role === Role.User) {
-    //   dispatch(login({ user: response.data }));
-
-    //   navigate("MainStack", {});
-    // } else {
-    //   invalidLoginAlert();
-    // }
-    setLoading(false);
+    try {
+      let response: Response = await Login(data.email, data.password);
+      if (response.status && response.data.role === Role.User) {
+        dispatch(login({ user: response.data }));
+        navigate("MainStack", {});
+      } else {
+        invalidLoginAlert();
+      }
+    } catch (error) {
+      Alert.alert("Error", "An error occurred during login. Please try again.");
+    } finally {
+      setLoading(false);
+    }
   };
 
   const handleForgotPassword = () => {
-    // Handle forgot password logic
+    try {
+      // Handle forgot password logic
+    } catch (error) {
+      Alert.alert("Error", "An error occurred. Please try again.");
+    }
   };
 
   const handleGoogleLogin = async () => {
-    // try {
-    //   await GoogleSignin.hasPlayServices();
-    //   const userInfo = await GoogleSignin.signIn();
-    //   // You can dispatch a login action here or navigate to the main screen
-    //   // Example:
-    //   // dispatch(login({ user: userInfo }));
-    //   // navigate("MainStack", {});
-    //   console.log(userInfo)
-    // } catch (error) {
-    //   if (error.code === statusCodes.SIGN_IN_CANCELLED) {
-    //     // user cancelled the login flow
-    //     console.log('User cancelled the login');
-    //   } else if (error.code === statusCodes.IN_PROGRESS) {
-    //     // operation (e.g. sign in) is in progress already
-    //     console.log('Sign in is in progress');
-    //   } else if (error.code === statusCodes.PLAY_SERVICES_NOT_AVAILABLE) {
-    //     // play services not available or outdated
-    //     console.log('Play services not available or outdated');
-    //   } else {
-    //     // some other error happened
-    //     console.error(error);
-    //   }
-    // }
+    // Handle Google sign-in logic
   };
 
   return (
@@ -101,12 +101,16 @@ const LoginScreen: React.FC = () => {
           toggleSecureTextEntry={toggleSecureTextEntry}
         />
       </View>
-      {/* forget password */}
       <TouchableOpacity onPress={handleForgotPassword} style={styles.forgotContainer}>
         <Text style={styles.forgot}>Forgot Password?</Text>
       </TouchableOpacity>
-      <PrimaryButton text={loading ? "Logging in..." : "Login"} isLoading={loading} disable={loading} onClick={handleLogin} width={null} />
-      {/* don't have an account sign up */}
+      <PrimaryButton
+        text={loading ? "Logging in..." : "Login"}
+        isLoading={loading}
+        disable={loading}
+        onClick={handleLogin}
+        width={null}
+      />
       <View style={styles.signUpContainer}>
         <Text>Don't have an account?</Text>
         <TouchableOpacity onPress={() => navigate("Signup", {})}>

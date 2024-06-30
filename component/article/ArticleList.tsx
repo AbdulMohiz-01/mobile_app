@@ -8,7 +8,6 @@ interface ArticleListProps {
 }
 
 const ArticleList: React.FC<ArticleListProps> = ({ articles }) => {
-    console.log('ArticleList:', articles);
     return (
         <FlatList
             data={articles}

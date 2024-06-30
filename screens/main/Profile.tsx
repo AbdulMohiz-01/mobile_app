@@ -1,35 +1,48 @@
+import React, { useEffect } from "react";
+import { Text, View, StyleSheet, TouchableOpacity, Image, Alert } from "react-native";
+import { useSelector, useDispatch } from "react-redux";
+import { logout } from "redux/slice/userSlice";
+import { RootState } from "redux/store"; // Import RootState type
+import { navigate } from "navigation/NavigationService";
 import { icons } from "constants/paths";
 import { theme } from "constants/theme";
 import { User } from "model/user";
-import React from "react";
-import { Text, View, StyleSheet, TouchableOpacity, Image } from "react-native";
-import { useSelector, useDispatch } from "react-redux";
-import { logout } from "redux/slice/userSlice";
-import store, { RootState } from "redux/store";
-import { navigate } from "navigation/NavigationService";
-
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 const Profile: React.FC = () => {
-  const user: User = useSelector((state: RootState) => state.user.user);
+  const user: User = useSelector((state: RootState) => state.user.user) || null;
   const dispatch = useDispatch();
 
+  useEffect(() => {
+    if (!user) {
+      navigate("AuthStack", {});
+    }
+  }, [user]);
 
-
-  const handleLogOut = () => {
+  const handleLogOut = async () => {
+    // remove the 'user' key from AsyncStorage
+    try {
+      await AsyncStorage.removeItem('user');
+    } catch (error) {
+      Alert.alert("Error", "Failed to log out. Please try again.");
+    }
     dispatch(logout());
     navigate("AuthStack", {});
-  }
+  };
 
   const handleEditProfile = () => {
     navigate("EditProfile", {});
-  }
+  };
 
+  if (!user) return null; // Add a loading state or a placeholder here if needed
 
   return (
     <View style={styles.container}>
       <View style={styles.upperContainer}>
         <Text style={[styles.profileImage, { backgroundColor: user?.profileColor }]}>
-          <Text style={[styles.profileImageText, { backgroundColor: user?.profileColor }]}>{user?.name[0].toLocaleUpperCase().toString()}</Text>
+          <Text style={[styles.profileImageText, { backgroundColor: user?.profileColor || "#f7a102" }]}>
+            {user?.name[0]?.toUpperCase() || "K"}
+          </Text>
         </Text>
         {/* <TouchableOpacity>
           <Image source={icons['profileImageUpload']} style={styles.profileUploadIcon} />
@@ -62,7 +75,7 @@ const Profile: React.FC = () => {
         </TouchableOpacity>
       </View>
     </View>
-  )
+  );
 };
 
 const styles = StyleSheet.create({
@@ -106,10 +119,12 @@ const styles = StyleSheet.create({
     height: 150,
     textAlign: 'center',
     lineHeight: 150,
-
+    overflow: 'hidden',
   },
   profileImageText: {
     fontSize: 50,
+    height: 20,
+    overflow: 'hidden',
   },
   profileUploadIcon: {
     width: 30,
@@ -136,6 +151,6 @@ const styles = StyleSheet.create({
     width: 20,
     height: 20,
   }
-})
+});
 
 export default Profile;
