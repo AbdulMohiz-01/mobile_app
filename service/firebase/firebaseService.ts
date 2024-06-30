@@ -1,6 +1,6 @@
 import { User } from '../../model/user';
 import { db } from './firebaseConfig';
-import { collection, addDoc, getDocs, setDoc, doc, updateDoc, getDoc } from 'firebase/firestore';
+import { collection, addDoc, getDocs, setDoc, doc, updateDoc, getDoc, where, query as firestoreQuery } from 'firebase/firestore';
 
 
 export const retrieveAllDocuments = async (collectionName: string) => {
@@ -17,6 +17,31 @@ export const retrieveAllDocuments = async (collectionName: string) => {
     return documents;
   } catch (error) {
     console.error('Error retrieving documents:', error);
+    return [];
+  }
+};
+
+export const retrieveAllDocumentsByQuery = async (collectionName: string, query: any) => {
+  try {
+    const collectionRef = collection(db, collectionName);
+
+    // Construct Firestore query from the provided query object
+    const firestoreQueries = Object.keys(query).map(key =>
+      where(key, '==', query[key])
+    );
+
+    const q = firestoreQuery(collectionRef, ...firestoreQueries);
+    const querySnapshot = await getDocs(q);
+
+    // Extract documents from the query snapshot
+    const documents = querySnapshot.docs.map(doc => ({
+      id: doc.id,
+      ...doc.data()
+    }));
+
+    return documents;
+  } catch (error) {
+    console.error("Error retrieving documents:", error);
     return [];
   }
 };

@@ -11,37 +11,6 @@ export const styles = StyleSheet.create({
         paddingHorizontal: 20,
 
     },
-    headerContainer: {
-        marginVertical: 20,
-        marginBottom: 0,
-    },
-    headerText: {
-        fontSize: 20,
-        fontWeight: "bold",
-    },
-    headerSubText: {
-        fontSize: 16,
-        color: "gray",
-    },
-    sampleContainer: {
-        marginTop: 10,
-        marginBottom: 20,
-    },
-    sampleText: {
-        fontSize: 18,
-        fontWeight: "bold",
-    },
-    sampleImagesWrapper: {
-        display: "flex",
-        flexDirection: "row",
-        alignItems: "center",
-        gap: 5,
-    },
-    sampleImage: {
-        width: 100,
-        height: 100,
-        borderRadius: 10,
-    },
     uploadWrapper: {
         marginVertical: 20,
     },

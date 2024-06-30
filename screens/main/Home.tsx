@@ -12,14 +12,17 @@ import { icons, images } from "constants/paths";
 import { theme } from "constants/theme";
 import { navigate } from "@navigation/NavigationService";
 import ArticleList from "component/article/ArticleList";
-import { getAllArticles } from "service/article/articleService";
+import { getAllArticles, getArticleByTag } from "service/article/articleService";
 import { Input } from "component";
-
+import { useSelector } from "react-redux";
+import { RootState } from "redux/store";
 const Home: React.FC = () => {
   const [searchText, setSearchText] = useState<string>("");
   const [articles, setArticles] = useState<any[]>([]);
   const [loading, setLoading] = useState<boolean>(false);
   const [error, setError] = useState<boolean>(false);
+  const [learnMoreLoading, setLearnMoreLoading] = useState<boolean>(false);
+  const user = useSelector((state: RootState) => state.user.user);
 
   useEffect(() => {
     fetchArticles();
@@ -37,12 +40,27 @@ const Home: React.FC = () => {
     setLoading(false);
   };
 
+  const handleLearnMore = async () => {
+    setLearnMoreLoading(true);
+    const article = await getArticleByTag("AI");
+    console.log(article);
+    const _f = article[0];
+    const _id = _f.id;
+    setLearnMoreLoading(false);
+    navigate("ArticleDetail", { articleId: _id });
+  }
+
+
   const renderHeader = () => (
     <View style={styles.header}>
       <Text style={styles.attentionText}>
         Find your desired eye health solution
       </Text>
-      <Image source={icons.bell} style={styles.icon} />
+      <TouchableOpacity onPress={() => navigate("Profile", {})}>
+        <Text style={[styles.profileIcon, { backgroundColor: user?.profileColor || "#f7a102" }]}>
+          {user?.name[0]}
+        </Text>
+      </TouchableOpacity>
     </View>
   );
 
@@ -51,7 +69,7 @@ const Home: React.FC = () => {
       <Input
         value={searchText}
         onChangeText={(value) => setSearchText(value)}
-        placeholder="Search eye disease, articles..."
+        placeholder="Search eye disease"
         beforeIcon="search"
         width="100%"
       />
@@ -60,12 +78,23 @@ const Home: React.FC = () => {
 
   const renderNavigation = () => (
     <View style={styles.navigationContainer}>
-      <TouchableOpacity onPress={() => navigate("AnalyseImage", {})}>
-        <View style={styles.navChilds}>
-          <Image source={icons.eyeOpen} style={styles.navIcon} />
-          <Text style={styles.navChildText}>Retinopathy</Text>
-        </View>
-      </TouchableOpacity>
+      {
+        // if search text contains retinopathy then show 
+        searchText.toLowerCase().includes("retinopathy") || searchText == "" ? (
+          <TouchableOpacity onPress={() => navigate("AnalyseImage", {})}>
+            <View style={styles.navChilds}>
+              <Image source={icons.eyeOpen} style={styles.navIcon} />
+              <Text style={styles.navChildText}>Retinopathy</Text>
+            </View>
+          </TouchableOpacity>
+        ) : (
+          // no diseas found
+          <View style={styles.navChilds}>
+            <Text>No Search Results</Text>
+          </View>
+
+        )
+      }
     </View>
   );
 
@@ -75,8 +104,10 @@ const Home: React.FC = () => {
         <Text style={styles.bannerLeftChildText}>
           Early protection for your family's eye health.
         </Text>
-        <TouchableOpacity style={styles.bannerButton}>
-          <Text style={styles.buttonText}>Learn More</Text>
+        <TouchableOpacity style={styles.bannerButton} onPress={handleLearnMore}>
+          {
+            learnMoreLoading ? <ActivityIndicator color="#fff" /> : <Text style={styles.buttonText}>Learn More</Text>
+          }
         </TouchableOpacity>
       </View>
       <View style={styles.bannerRightChild}>
@@ -150,17 +181,32 @@ const styles = StyleSheet.create({
   container: {
     backgroundColor: "#fff",
   },
+  profileIcon: {
+    // fontSize: 30,
+    width: 30,
+    height: 30,
+    borderRadius: 999,
+    textAlign: "center",
+    lineHeight: 30,
+    backgroundColor: theme.primary_color,
+    color: "#fff",
+    fontWeight: "bold",
+
+  },
   header: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
-    marginVertical: 20,
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    padding: 16,
+    backgroundColor: '#fff', // Add a background color to make it stand out
+    borderBottomWidth: 1,
+    borderBottomColor: '#ddd',
   },
   attentionText: {
-    width: "70%",
-    fontSize: 22,
-    fontWeight: "bold",
-    color: "#333",
+    fontSize: 20, // Increase the font size
+    fontWeight: 'bold', // Make the text bold
+    color: '#333', // Change the color to a darker shade
+    width: '80%', // Set the width to 80% of the screen
   },
   icon: {
     width: 25,
@@ -169,13 +215,16 @@ const styles = StyleSheet.create({
   search: {
     display: "flex",
     marginTop: 20,
-    width: "100%",
+    marginLeft: 10,
+    // width: "100%",
+    width: 450
   },
   navigationContainer: {
     marginTop: 20,
     flexDirection: "row",
     justifyContent: "space-between",
     flexWrap: "wrap",
+    marginLeft: 20,
   },
   navChilds: {
     alignItems: "center",
@@ -203,6 +252,7 @@ const styles = StyleSheet.create({
   },
   bannerRightChild: {
     width: "40%",
+    marginLeft: 10,
   },
   bannerImage: {
     width: 100,
