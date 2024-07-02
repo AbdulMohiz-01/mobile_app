@@ -15,9 +15,20 @@
       "**/*"
     ],
     "ios": {
-      "supportsTablet": true
+      "bundleIdentifier": "com.tahamalik.fypretinopathy",
+      "supportsTablet": true,
+      "infoPlist": {
+        "CFBundleURLTypes": [
+          {
+            "CFBundleURLSchemes": [
+              "com.googleusercontent.apps.699664001248-oqevv5fbkrev2ukhbgb1ehh2mf3hspkf"
+            ]
+          }
+        ]
+      }
     },
     "android": {
+      "package": "com.tahamalik.fypretinopathy",
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#ffffff"
@@ -27,7 +38,13 @@
       "favicon": "./assets/favicon.png"
     },
     "plugins": [
-      "expo-font"
-    ]
+      "expo-font",
+      "@react-native-google-signin/google-signin"
+    ],
+    "extra": {
+      "eas": {
+        "projectId": "07affc3c-0212-40f9-95d8-d0d30a107e07"
+      }
+    }
   }
 }

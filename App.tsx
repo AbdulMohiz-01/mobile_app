@@ -6,6 +6,8 @@ import { NavigationContainer } from "@react-navigation/native";
 import store from "redux/store";
 import { Provider } from "react-redux";
 import { Provider as PaperProvider } from 'react-native-paper';
+import { enableScreens } from 'react-native-screens';
+enableScreens();
 
 const App: React.FC = () => {
   return (
