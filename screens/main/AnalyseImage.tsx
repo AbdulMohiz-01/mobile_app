@@ -11,6 +11,10 @@ import { getXaiImage } from "service/artifact/artifactService";
 import { LinearGradient } from "expo-linear-gradient";
 import { getContentFromGemini } from "service/gemini/gemini";
 import CustomAlert from "component/alerts/CustomeAlert";
+import { getArticleByClassNumber, getArticleByTag } from "service/article/articleService";
+import { navigate } from "@navigation/NavigationService";
+import { ActivityIndicator } from "react-native-paper";
+import HeaderSection from "component/cards/headerCard";
 
 const AnalyseImage: React.FC = () => {
   const [selectedImage, setSelectedImage] = useState(null);
@@ -22,6 +26,8 @@ const AnalyseImage: React.FC = () => {
   const [xaiImageUri, setXaiImageUri] = useState<string | null>(null); // New state for XAI image
   const [chartType, setChartType] = useState<'pie' | 'bar'>('pie'); // State to manage chart type
   const [isAlertVisible, setIsAlertVisible] = useState(false);
+  const [learnMoreLoading, setLearnMoreLoading] = useState<boolean>(false);
+  const [predictedClassNumber, setPredictedClassNumber] = useState<number>(0);
   const handleChooseImage = async () => {
     if (selectedImage) {
       setIsAnalyzing(true);
@@ -35,6 +41,7 @@ const AnalyseImage: React.FC = () => {
           // setIsAlertVisible(true);
           return;
         }
+        setPredictedClassNumber(parseInt(response.data.predicted_class));
         const xaiImage = await getXaiImage();
         setResult(prevState => ({
           ...prevState,
@@ -56,8 +63,11 @@ const AnalyseImage: React.FC = () => {
           label: ['No Dr', 'Mild', 'Moderate', 'Severe', 'Proliferative'][index],
           frontColor: item.color
         })));
-        const descriptiveData = await getContentFromGemini("No Diabetic Retinopathy");
-        setDescriptiveResult(descriptiveData[0]);
+        let descriptiveData: any = await getContentFromGemini("No Diabetic Retinopathy");
+        if (descriptiveData === null) {
+          descriptiveData = diabeticRetinopathyData[predictedClass];
+        }
+        setDescriptiveResult(descriptiveData);
         setXaiImageUri(xaiImage); // Set the XAI image URI
       }
       setSelectedImage(null);
@@ -82,6 +92,16 @@ const AnalyseImage: React.FC = () => {
       setPieChartData([]);
     }
   };
+
+  const handlerLearnMore = async () => {
+    setLearnMoreLoading(true);
+    const article = await getArticleByClassNumber(predictedClassNumber);
+    const _f = article[0];
+    const _id = _f.id;
+    setLearnMoreLoading(false);
+    navigate("ArticleDetail", { articleId: _id });
+  }
+
 
   function getPercentageOfPrediction(prediction?: number) {
     if (prediction != null) {
@@ -110,19 +130,7 @@ const AnalyseImage: React.FC = () => {
   return (
     <ScrollView contentContainerStyle={styles.scrollViewContent}>
       <View style={styles.wrapper}>
-        <View style={styles.headerContainer}>
-          <Text style={styles.headerText}>Upload your Retinal Image</Text>
-          {/* subtext */}
-          <Text style={styles.headerSubText}>Submit your retinal image for a quick and accurate assesment</Text>
-        </View>
-        {/* sample images */}
-        <View style={styles.sampleContainer}>
-          <Text style={styles.sampleText}>Sample Images</Text>
-          <View style={styles.sampleImagesWrapper}>
-            <Image source={images.sample1} style={styles.sampleImage} />
-            <Image source={images.sample2} style={styles.sampleImage} />
-          </View>
-        </View>
+        <HeaderSection />
 
         <CustomAlert isVisible={isAlertVisible} onClose={() => setIsAlertVisible(false)} />
 
@@ -185,12 +193,12 @@ const AnalyseImage: React.FC = () => {
                               >
                                 <Image source={icons.pieChart} style={styles.chartButtonIcon} />
                               </TouchableOpacity>
-                              <TouchableOpacity
+                              {/* <TouchableOpacity
                                 style={[styles.chartButton, chartType === 'bar' && styles.activeChartButton]}
                                 onPress={() => setChartType('bar')}
                               >
                                 <Image source={icons.barChart} style={styles.chartButtonIcon} />
-                              </TouchableOpacity>
+                              </TouchableOpacity> */}
                             </View>
                           </View>
                           {chartType === 'pie' ? (
@@ -271,8 +279,10 @@ const AnalyseImage: React.FC = () => {
                         <Text></Text>
                         <Text style={styles.resultDetailsHeading}>Precautions</Text>
                         <Text style={styles.resultDetailsText}>{descriptiveResult?.details.precautions}</Text>
-                        <TouchableOpacity>
-                          <Text style={styles.resultDetailsButtonText}>Learn More</Text>
+                        <TouchableOpacity onPress={handlerLearnMore}>
+                          {
+                            learnMoreLoading ? <ActivityIndicator /> : <Text style={styles.resultDetailsButtonText}>Learn More</Text>
+                          }
                         </TouchableOpacity>
                       </View>
                     </View>

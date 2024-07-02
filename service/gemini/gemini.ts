@@ -16,7 +16,7 @@ export const getContentFromGemini = async (className) => {
 
         // Check if response is ok
         if (!response.ok) {
-            throw new Error("Failed to fetch content from Gemini");
+            return null;
         }
 
         // Parse the response data
