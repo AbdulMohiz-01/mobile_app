@@ -5,7 +5,6 @@ import * as ImagePicker from 'expo-image-picker';
 import { icons, loaders } from "constants/paths";
 import { analyseImage } from "service/screens/analyseImageService";
 import { DiabeticRetinopathyResult, ServerResult, diabeticRetinopathyData } from "model/results";
-import { styles } from "style/analyseImage";
 import { PieChart, BarChart } from "react-native-gifted-charts"; // Assuming you're using this library
 import { getXaiImage } from "service/artifact/artifactService";
 import { LinearGradient } from "expo-linear-gradient";
@@ -15,6 +14,9 @@ import { getArticleByClassNumber, getArticleByTag } from "service/article/articl
 import { navigate } from "@navigation/NavigationService";
 import { ActivityIndicator } from "react-native-paper";
 import HeaderSection from "component/cards/headerCard";
+import PredictionsChart from "component/cards/PredictionChart";
+import { styles } from "style/analyseImage";
+import XaiInterpretation from "component/cards/XaiExp";
 
 const AnalyseImage: React.FC = () => {
   const [selectedImage, setSelectedImage] = useState(null);
@@ -28,6 +30,7 @@ const AnalyseImage: React.FC = () => {
   const [isAlertVisible, setIsAlertVisible] = useState(false);
   const [learnMoreLoading, setLearnMoreLoading] = useState<boolean>(false);
   const [predictedClassNumber, setPredictedClassNumber] = useState<number>(0);
+
   const handleChooseImage = async () => {
     if (selectedImage) {
       setIsAnalyzing(true);
@@ -48,15 +51,16 @@ const AnalyseImage: React.FC = () => {
           class: response.data.predicted_class.toString(),
           confidence: response.data.confidence,
           predictons: response.data.predictions
-        }))
+        }));
         const predictedClass = response.data.predicted_class.toString();
         const pieData = [
-          { value: response.data.predictions[0], color: '#00ff00' },
-          { value: response.data.predictions[1], color: '#e6e600' },
-          { value: response.data.predictions[2], color: '#ff0000' },
-          { value: response.data.predictions[3], color: '#89060e' },
-          { value: response.data.predictions[4], color: '#87050d' }
+          { value: response.data.predictions[0], color: '#2ecc71' }, // Soft green for No DR
+          { value: response.data.predictions[1], color: '#f1c40f' }, // Bright yellow for Mild
+          { value: response.data.predictions[2], color: '#e67e22' }, // Vibrant orange for Moderate
+          { value: response.data.predictions[3], color: '#e74c3c' }, // Bold red for Severe
+          { value: response.data.predictions[4], color: '#c0392b' }  // Deep red for Proliferative
         ];
+
         setPieChartData(pieData);
         setBarChartData(pieData.map((item, index) => ({
           value: item.value,
@@ -102,8 +106,7 @@ const AnalyseImage: React.FC = () => {
     navigate("ArticleDetail", { articleId: _id });
   }
 
-
-  function getPercentageOfPrediction(prediction?: number) {
+  const getPercentageOfPrediction = (prediction) => {
     if (prediction != null) {
       return Math.round(prediction * 100) + "%";
     }
@@ -113,15 +116,15 @@ const AnalyseImage: React.FC = () => {
   const getAttentionTextColor = () => {
     switch (result?.class) {
       case '0':
-        return "#00ff00"; // Light green
+        return "#2ecc71"; // Soft green for No DR
       case '1':
-        return "#e6e600"; // Light green
+        return "#f1c40f"; // Bright yellow for Mild
       case '2':
-        return "#ff0000"; // Light yellow
+        return "#e67e22"; // Vibrant orange for Moderate
       case '3':
-        return "#89060e"; // Light red
+        return "#e74c3c"; // Bold red for Severe
       case '4':
-        return "#87050d"; // Dark red
+        return "#c0392b"; // Deep red for Proliferative
       default:
         return "#000"; // Default color if none matches
     }
@@ -178,95 +181,20 @@ const AnalyseImage: React.FC = () => {
                   {
                     pieChartData.length > 0 && (
                       <View style={styles.chartContainer}>
-                        <LinearGradient
-                          colors={['hsla(330, 36%, 53%, 1)', 'hsla(289, 68%, 19%, 1)']}
-                          start={{ x: 0, y: 0 }}
-                          end={{ x: 1, y: 0 }}
-                          style={styles.gradientBackground}
-                        >
-                          <View style={styles.chartHeadingWrapper}>
-                            <Text style={styles.chartHeading}>Predictions Chart</Text>
-                            <View style={styles.chartButtonsContainer}>
-                              <TouchableOpacity
-                                style={[styles.chartButton, chartType === 'pie' && styles.activeChartButton]}
-                                onPress={() => setChartType('pie')}
-                              >
-                                <Image source={icons.pieChart} style={styles.chartButtonIcon} />
-                              </TouchableOpacity>
-                              {/* <TouchableOpacity
-                                style={[styles.chartButton, chartType === 'bar' && styles.activeChartButton]}
-                                onPress={() => setChartType('bar')}
-                              >
-                                <Image source={icons.barChart} style={styles.chartButtonIcon} />
-                              </TouchableOpacity> */}
-                            </View>
-                          </View>
-                          {chartType === 'pie' ? (
-                            <View style={styles.pieChartWrapper}>
-                              <PieChart data={pieChartData} radius={80} />
-                            </View>
-                          ) : (
-                            <View style={styles.barChartWrapper}>
-                              <BarChart data={pieChartData} />
-                            </View>
-                          )}
-                          <View style={styles.legendsWrapper}>
-                            <View>
-                              <Text style={[styles.legendColorBar, { backgroundColor: '#00ff00' }]}></Text>
-                              <Text style={styles.legend}>No Dr: </Text>
-                              <Text style={[styles.legendValue, result.class === '0' ? styles.boldText : styles.nullclass]}>
-                                {getPercentageOfPrediction(result.predictons[0])}
-                              </Text>
-                            </View>
-                            <View>
-                              <Text style={[styles.legendColorBar, { backgroundColor: '#e6e600' }]}></Text>
-                              <Text style={styles.legend}>Mild: </Text>
-                              <Text style={[styles.legendValue, result.class === '1' ? styles.boldText : styles.nullclass]}>
-                                {getPercentageOfPrediction(result.predictons[1])}
-                              </Text>
-                            </View>
-                            <View>
-                              <Text style={[styles.legendColorBar, { backgroundColor: '#ff0000' }]}></Text>
-                              <Text style={styles.legend}>Moderate: </Text>
-                              <Text style={[styles.legendValue, result.class === '2' ? styles.boldText : styles.nullclass]}>
-                                {getPercentageOfPrediction(result.predictons[2])}
-                              </Text>
-                            </View>
-                            <View>
-                              <Text style={[styles.legendColorBar, { backgroundColor: '#8b0000' }]}></Text>
-                              <Text style={styles.legend}>Severe: </Text>
-                              <Text style={[styles.legendValue, result.class === '3' ? styles.boldText : styles.nullclass]}>
-                                {getPercentageOfPrediction(result.predictons[3])}
-                              </Text>
-                            </View>
-                            <View>
-                              <Text style={[styles.legendColorBar, { backgroundColor: '#8b0000' }]}></Text>
-                              <Text style={styles.legend}>Proliferative: </Text>
-                              <Text style={[styles.legendValue, result.class === '4' ? styles.boldText : styles.nullclass]}>
-                                {getPercentageOfPrediction(result.predictons[4])}
-                              </Text>
-                            </View>
-                          </View>
-                        </LinearGradient>
+                        <PredictionsChart
+                          chartType={chartType}
+                          setChartType={setChartType}
+                          pieChartData={pieChartData}
+                          barChartData={barChartData}
+                          result={result}
+                          getPercentageOfPrediction={getPercentageOfPrediction}
+                        />
                       </View>
                     )
                   }
-                  <View style={styles.xaiContainer}>
-                    <Text style={styles.xaiHeading}>XAI Interpretation</Text>
-                    {xaiImageUri && (
-                      <View style={styles.xaiImageBorder} >
-                        <Image source={{ uri: xaiImageUri }} style={[styles.xaiImage1]} />
-                      </View>
-                    )}
-                    <View style={styles.noteContainer}>
-                      <View style={styles.noteTextContainer}>
-                        <Text style={styles.noteHeading}>Note: </Text>
-                        <Text style={styles.noteText}>
-                          The blue areas in the XAI image indicate the regions that influenced the model's decision the most. These areas might show signs of swelling in blood vessels or other anomalies related to diabetic retinopathy. The red areas, on the other hand, are less significant in the decision-making process.
-                        </Text>
-                      </View>
-                    </View>
-                  </View>
+                  {
+                    xaiImageUri && <XaiInterpretation xaiImageUri={xaiImageUri} />
+                  }
 
                   <View style={styles.resultContainer}>
                     <View style={styles.resultWrapper}>

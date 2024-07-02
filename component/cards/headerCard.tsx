@@ -42,9 +42,9 @@ const HeaderSection = () => {
 
 const styles = StyleSheet.create({
     container: {
-        flex: 1,
+        // flex: 1,
         padding: 10,
-        backgroundColor: '#f0f4f8', // Light grey background for the entire container
+        // backgroundColor: '#f0f4f8', // Light grey background for the entire container
     },
     card: {
         backgroundColor: '#ffffff', // White background for the card
@@ -87,7 +87,7 @@ const styles = StyleSheet.create({
     },
     sampleImagesWrapper: {
         flexDirection: 'row',
-        justifyContent: 'space-around',
+        // justifyContent: 'space-around',
     },
     sampleImage: {
         width: 100,

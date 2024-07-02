@@ -1,5 +1,5 @@
 import React, { useEffect } from "react";
-import { View, Text, StyleSheet, TouchableOpacity, Alert } from "react-native";
+import { View, Text, StyleSheet, TouchableOpacity, Alert, Image } from "react-native";
 import { navigate } from "navigation/NavigationService";
 import { Login, invalidLoginAlert } from "service/screens/loginService";
 import { PrimaryButton, Input, IconButton, LineLoading } from "component";
@@ -10,12 +10,15 @@ import { login, loadUserFromStorage } from "redux/slice/userSlice";
 import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "redux/store";
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { images } from "constants/paths";
+import LinearGradient from "react-native-gifted-charts/src/Components/common/LinearGradient";
 
 const LoginScreen: React.FC = () => {
   const [data, setData] = React.useState({
     email: "",
     password: "",
   });
+
   const dispatch = useDispatch();
   const user = useSelector((state: RootState) => state.user.user); // Select user from Redux state
   const [showPassword, setShowPassword] = React.useState(true);
@@ -81,7 +84,10 @@ const LoginScreen: React.FC = () => {
 
   return (
     <View style={styles.container}>
-      <Text style={styles.welcome}>Welcome</Text>
+      <View style={styles.welcome}>
+        <Image source={images.eye3dModal} style={{ width: 200, height: 200 }} />
+      </View>
+
       <View style={styles.inputView}>
         <Input
           value={data.email}
@@ -136,13 +142,14 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     alignItems: "center",
-    backgroundColor: "#fff",
+    backgroundColor: "#1d0515",
   },
   welcome: {
     fontWeight: "bold",
     fontSize: 50,
     color: "#333",
     marginBottom: 40,
+    marginTop: 40,
   },
   inputView: {
     marginTop: 10,

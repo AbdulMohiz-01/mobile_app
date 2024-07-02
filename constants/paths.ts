@@ -33,4 +33,5 @@ export const images: { [key: string]: any } = {
     sample1: require('assets/images/sample1.jpg'),
     sample2: require('assets/images/sample2.jpg'),
     homeBannerImage: require('assets/icons/home-banner-image.png'),
+    eye3dModal: require('assets/images/loginImage.jpg'),
 };

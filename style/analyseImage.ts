@@ -126,14 +126,9 @@ export const styles = StyleSheet.create({
     },
 
     chartContainer: {
-        display: "flex",
-        flexDirection: "column",
-        justifyContent: "center",
-        alignItems: "center",
-        marginBottom: 20,
+        flex: 1,
         padding: 20,
-        paddingTop: 0,
-        borderRadius: 10,
+        // backgroundColor: '#f5f5f5',
     },
     pieChartWrapper: {
         width: 200,
