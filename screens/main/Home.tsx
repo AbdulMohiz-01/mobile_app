@@ -83,7 +83,7 @@ const Home: React.FC = () => {
         searchText.toLowerCase().includes("retinopathy") || searchText == "" ? (
           <TouchableOpacity onPress={() => navigate("AnalyseImage", {})}>
             <View style={styles.navChilds}>
-              <Image source={icons.eyeOpen} style={styles.navIcon} />
+              <Image source={icons.retinopathy} style={styles.navIcon} />
               <Text style={styles.navChildText}>Retinopathy</Text>
             </View>
           </TouchableOpacity>
@@ -231,8 +231,8 @@ const styles = StyleSheet.create({
     marginBottom: 10,
   },
   navIcon: {
-    width: 30,
-    height: 30,
+    width: 40,
+    height: 40,
   },
   navChildText: {
     fontSize: 14,

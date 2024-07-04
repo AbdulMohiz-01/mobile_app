@@ -1,11 +1,13 @@
 import React, { useState, useEffect } from "react";
 import { View, Text, StyleSheet, TouchableOpacity, ScrollView, KeyboardAvoidingView, Platform } from "react-native";
 import { navigate } from "navigation/NavigationService";
-import { PrimaryButton, Input, ErrorModal } from "component";
+import { PrimaryButton, Input } from "component";
 import { theme } from "constants/theme";
 import { FormData } from "model/signupForm";
 import { createUser } from "service/screens/signupService";
 import { Response } from "model/response";
+import Modal from 'react-native-modal';
+import Icon from 'react-native-vector-icons/MaterialIcons';
 
 const SignupScreen: React.FC = () => {
   const [formData, setFormData] = useState<FormData>({
@@ -17,7 +19,7 @@ const SignupScreen: React.FC = () => {
   const [errors, setErrors] = useState<Partial<FormData>>({});
   const [showPassword, setShowPassword] = useState(true);
   const [buttonText, setButtonText] = useState("Sign Up");
-  const [showModal, setShowModal] = useState(false);
+  const [isModalVisible, setModalVisible] = useState(false);
 
   useEffect(() => {
     validateField("name", formData.name);
@@ -87,7 +89,7 @@ const SignupScreen: React.FC = () => {
       } else {
         // Handle error
         setButtonText("Sign Up");
-        setShowModal(true);
+        setModalVisible(true);
       }
     }
   };
@@ -149,9 +151,15 @@ const SignupScreen: React.FC = () => {
           <Text style={styles.link}>Already have an account? Login</Text>
         </TouchableOpacity>
 
-        {/* {
-          showModal && <ErrorModal text={"Signup failed"} dismissText={"OK"} onDismiss={() => setShowModal(false)} />
-        } */}
+        <Modal isVisible={isModalVisible} onBackdropPress={() => setModalVisible(false)} animationIn="zoomIn" animationOut="zoomOut">
+          <View style={styles.modalContent}>
+            <Icon name="error-outline" size={40} color="red" />
+            <Text style={styles.modalText}>This email is already in use!</Text>
+            <TouchableOpacity onPress={() => setModalVisible(false)}>
+              <Text style={styles.modalButton}>OK</Text>
+            </TouchableOpacity>
+          </View>
+        </Modal>
       </ScrollView>
     </KeyboardAvoidingView>
   );
@@ -184,6 +192,23 @@ const styles = StyleSheet.create({
     color: theme.primary_color,
   },
   inputView: {
+    marginTop: 10,
+  },
+  modalContent: {
+    backgroundColor: "white",
+    padding: 20,
+    borderRadius: 10,
+    alignItems: "center",
+  },
+  modalText: {
+    fontSize: 18,
+    marginBottom: 10,
+    marginTop: 10,
+    textAlign: "center",
+  },
+  modalButton: {
+    color: theme.primary_color,
+    fontSize: 16,
     marginTop: 10,
   },
 });

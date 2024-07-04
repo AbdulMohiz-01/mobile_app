@@ -1,8 +1,8 @@
-import React, { useEffect } from "react";
-import { View, Text, StyleSheet, TouchableOpacity, Alert, Image } from "react-native";
+import React, { useEffect, useState } from "react";
+import { View, Text, StyleSheet, TouchableOpacity, Image } from "react-native";
 import { navigate } from "navigation/NavigationService";
-import { Login, invalidLoginAlert } from "service/screens/loginService";
-import { PrimaryButton, Input, IconButton, LineLoading } from "component";
+import { Login } from "service/screens/loginService";
+import { PrimaryButton, Input, IconButton } from "component";
 import { theme } from "constants/theme";
 import { Response } from "model/response";
 import { Role } from "model/role";
@@ -11,18 +11,21 @@ import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "redux/store";
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { images } from "constants/paths";
-import LinearGradient from "react-native-gifted-charts/src/Components/common/LinearGradient";
+import Modal from 'react-native-modal';
+import Icon from 'react-native-vector-icons/MaterialIcons';
 
 const LoginScreen: React.FC = () => {
-  const [data, setData] = React.useState({
+  const [data, setData] = useState({
     email: "",
     password: "",
   });
 
   const dispatch = useDispatch();
   const user = useSelector((state: RootState) => state.user.user); // Select user from Redux state
-  const [showPassword, setShowPassword] = React.useState(true);
-  const [loading, setLoading] = React.useState(false);
+  const [showPassword, setShowPassword] = useState(true);
+  const [loading, setLoading] = useState(false);
+  const [modalVisible, setModalVisible] = useState(false);
+  const [modalMessage, setModalMessage] = useState("");
 
   const toggleSecureTextEntry = () => {
     setShowPassword(!showPassword);
@@ -49,7 +52,8 @@ const LoginScreen: React.FC = () => {
 
   const handleLogin = async () => {
     if (!data.email || !data.password) {
-      Alert.alert("Error", "Email and password are required.");
+      setModalMessage("Email and password are required.");
+      setModalVisible(true);
       return;
     }
 
@@ -61,10 +65,12 @@ const LoginScreen: React.FC = () => {
         dispatch(login({ user: response.data }));
         navigate("MainStack", {});
       } else {
-        invalidLoginAlert();
+        setModalMessage("Invalid credentials");
+        setModalVisible(true);
       }
     } catch (error) {
-      Alert.alert("Error", "An error occurred during login. Please try again.");
+      setModalMessage("An error occurred during login. Please try again.");
+      setModalVisible(true);
     } finally {
       setLoading(false);
     }
@@ -74,7 +80,8 @@ const LoginScreen: React.FC = () => {
     try {
       // Handle forgot password logic
     } catch (error) {
-      Alert.alert("Error", "An error occurred. Please try again.");
+      setModalMessage("An error occurred. Please try again.");
+      setModalVisible(true);
     }
   };
 
@@ -134,6 +141,16 @@ const LoginScreen: React.FC = () => {
         onClick={handleGoogleLogin}
         width={null}
       />
+
+      <Modal isVisible={modalVisible} onBackdropPress={() => setModalVisible(false)} animationIn="zoomIn" animationOut="zoomOut">
+        <View style={styles.modalContent}>
+          <Icon name="error-outline" size={40} color="red" />
+          <Text style={styles.modalText}>{modalMessage}</Text>
+          <TouchableOpacity onPress={() => setModalVisible(false)}>
+            <Text style={styles.modalButton}>OK</Text>
+          </TouchableOpacity>
+        </View>
+      </Modal>
     </View>
   );
 };
@@ -142,7 +159,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     alignItems: "center",
-    backgroundColor: "#1d0515",
+    backgroundColor: "#fff"
   },
   welcome: {
     fontWeight: "bold",
@@ -180,6 +197,23 @@ const styles = StyleSheet.create({
     marginTop: 10,
     marginBottom: 10,
     fontSize: 12,
+  },
+  modalContent: {
+    backgroundColor: "white",
+    padding: 20,
+    borderRadius: 10,
+    alignItems: "center",
+  },
+  modalText: {
+    fontSize: 18,
+    marginBottom: 10,
+    marginTop: 10,
+    textAlign: "center",
+  },
+  modalButton: {
+    color: theme.primary_color,
+    fontSize: 16,
+    marginTop: 10,
   },
 });
 

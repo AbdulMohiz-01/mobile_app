@@ -22,6 +22,8 @@ export const getContentFromGemini = async (className) => {
         // Parse the response data
         const data = await response.json();
 
+        console.log("Data", data)
+
         // Ensure the response matches the expected structure
         const content = {
             [className]: {
@@ -33,6 +35,8 @@ export const getContentFromGemini = async (className) => {
                 }
             }
         };
+
+        console.log("content", content)
 
         return content;
     } catch (error) {

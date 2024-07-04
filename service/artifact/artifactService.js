@@ -37,13 +37,15 @@ export const predictImage = async () => {
 };
 
 export const getXaiImage = async () => {
-  const response = await fetch(API_ENDPOINTS.xai, {
+  const timestamp = new Date().getTime();
+  const response = await fetch(`${API_ENDPOINTS.xai}?t=${timestamp}`, {
     method: "GET",
   });
 
   if (!response.ok) {
     throw new Error("Error while explaining image");
   }
-  console.log(response.url);
-  return response.url; // Return the image URL
+
+  // Return the URL directly
+  return `${API_ENDPOINTS.xai}?t=${timestamp}`;
 };

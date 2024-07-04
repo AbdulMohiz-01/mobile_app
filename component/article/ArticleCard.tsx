@@ -40,7 +40,7 @@ const styles = StyleSheet.create({
         top: 5,
     },
     title: {
-        maxWidth: '90%',
+        maxWidth: '80%',
     }
 });
 

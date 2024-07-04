@@ -31,6 +31,14 @@ const AnalyseImage: React.FC = () => {
   const [learnMoreLoading, setLearnMoreLoading] = useState<boolean>(false);
   const [predictedClassNumber, setPredictedClassNumber] = useState<number>(0);
 
+  const classNames = {
+    '0': "No Diabatic Retinopathy",
+    '1': "Mild Diabatic Retinopathy",
+    '2': "Moderate Diabatice Retinopathy",
+    '3': "Severe Diabatice Retinopathy",
+    '4': "Proliferative Diabatic Retinopathy"
+  }
+
   const handleChooseImage = async () => {
     if (selectedImage) {
       setIsAnalyzing(true);
@@ -46,6 +54,7 @@ const AnalyseImage: React.FC = () => {
         }
         setPredictedClassNumber(parseInt(response.data.predicted_class));
         const xaiImage = await getXaiImage();
+        console.log("💕💕", xaiImage)
         setResult(prevState => ({
           ...prevState,
           class: response.data.predicted_class.toString(),
@@ -67,11 +76,12 @@ const AnalyseImage: React.FC = () => {
           label: ['No Dr', 'Mild', 'Moderate', 'Severe', 'Proliferative'][index],
           frontColor: item.color
         })));
-        let descriptiveData: any = await getContentFromGemini("No Diabetic Retinopathy");
+        let descriptiveData: any = await getContentFromGemini(classNames[response.data.predicted_class]);
         if (descriptiveData === null) {
           descriptiveData = diabeticRetinopathyData[predictedClass];
         }
-        setDescriptiveResult(descriptiveData);
+        const parsedResults = descriptiveData[classNames[response.data.predicted_class]];
+        setDescriptiveResult(parsedResults);
         setXaiImageUri(xaiImage); // Set the XAI image URI
       }
       setSelectedImage(null);
@@ -94,6 +104,7 @@ const AnalyseImage: React.FC = () => {
       setResult(null);
       setDescriptiveResult(null);
       setPieChartData([]);
+      setXaiImageUri(null);
     }
   };
 
@@ -155,6 +166,8 @@ const AnalyseImage: React.FC = () => {
               <TouchableOpacity style={styles.deleteIcon} onPress={() => {
                 setSelectedImage(null);
                 setIsAnalyzing(false);
+                setDescriptiveResult(null)
+                setXaiImageUri(null)
               }}>
                 <Image source={icons.trash} style={styles.icon} />
               </TouchableOpacity>

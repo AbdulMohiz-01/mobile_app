@@ -22,6 +22,7 @@ export const icons: { [key: string]: any } = {
     info: require('assets/icons/info.png'),
     barChart: require('assets/icons/bar-chart.png'),
     pieChart: require('assets/icons/pie-chart.png'),
+    retinopathy: require('assets/icons/retinopathy.png')
 };
 
 export const loaders: { [key: string]: any } = {
@@ -33,5 +34,5 @@ export const images: { [key: string]: any } = {
     sample1: require('assets/images/sample1.jpg'),
     sample2: require('assets/images/sample2.jpg'),
     homeBannerImage: require('assets/icons/home-banner-image.png'),
-    eye3dModal: require('assets/images/loginImage.jpg'),
+    eye3dModal: require('assets/images/loginImage.png'),
 };
