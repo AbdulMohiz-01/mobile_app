@@ -54,7 +54,6 @@ const AnalyseImage: React.FC = () => {
         }
         setPredictedClassNumber(parseInt(response.data.predicted_class));
         const xaiImage = await getXaiImage();
-        console.log("💕💕", xaiImage)
         setResult(prevState => ({
           ...prevState,
           class: response.data.predicted_class.toString(),
@@ -77,7 +76,7 @@ const AnalyseImage: React.FC = () => {
           frontColor: item.color
         })));
         let descriptiveData: any = await getContentFromGemini(classNames[response.data.predicted_class]);
-        if (descriptiveData === null) {
+        if (descriptiveData === null || descriptiveData[classNames[response.data.predicted_class]].description === "") {
           descriptiveData = diabeticRetinopathyData[predictedClass];
         }
         const parsedResults = descriptiveData[classNames[response.data.predicted_class]];
@@ -100,6 +99,11 @@ const AnalyseImage: React.FC = () => {
     let result = await ImagePicker.launchImageLibraryAsync();
     // console.log(result);
     if (!result.canceled) {
+      // check if the image type is either jpg, jpeg, or png
+      if (!result.assets[0].uri.match(/\.(jpe?g|png)$/)) {
+        Alert.alert('Invalid image type. Please upload a valid image type (JPEG, JPG, PNG)');
+        return;
+      }
       setSelectedImage({ uri: result.assets[0].uri });
       setResult(null);
       setDescriptiveResult(null);
@@ -179,7 +183,7 @@ const AnalyseImage: React.FC = () => {
                 {/* instructions */}
                 <View style={styles.instructionWrapper}>
                   <Text style={styles.instructionText}>Image only</Text>
-                  <Text style={styles.instructionSubText}>JPEG, JPG</Text>
+                  <Text style={styles.instructionSubText}>JPEG, JPG, PNG</Text>
                 </View>
                 <View style={[styles.instructionWrapper, { borderRightWidth: 0 }]}>
                   <Text style={styles.instructionText}>1 minute</Text>
