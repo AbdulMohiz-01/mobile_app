@@ -13,9 +13,14 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { images } from "constants/paths";
 import Modal from 'react-native-modal';
 import Icon from 'react-native-vector-icons/MaterialIcons';
+import LinearGradient from "react-native-gifted-charts/src/Components/common/LinearGradient";
 
 const LoginScreen: React.FC = () => {
   const [data, setData] = useState({
+    email: "",
+    password: "",
+  });
+  const [errors, setErrors] = useState({
     email: "",
     password: "",
   });
@@ -50,10 +55,37 @@ const LoginScreen: React.FC = () => {
     }
   }, [user, dispatch]);
 
+  const validateEmail = (email: string): string => {
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(email)) {
+      return "Please enter a valid email address.";
+    }
+    return "";
+  };
+
+  const validatePassword = (password: string): string => {
+    if (password.length < 8) {
+      return "Password must be at least 8 characters long.";
+    }
+    return "";
+  };
+
+  const handleBlurEmail = () => {
+    const emailError = validateEmail(data.email);
+    setErrors((prevErrors) => ({ ...prevErrors, email: emailError }));
+  };
+
+  const handleBlurPassword = () => {
+    const passwordError = validatePassword(data.password);
+    setErrors((prevErrors) => ({ ...prevErrors, password: passwordError }));
+  };
+
   const handleLogin = async () => {
-    if (!data.email || !data.password) {
-      setModalMessage("Email and password are required.");
-      setModalVisible(true);
+    const emailError = validateEmail(data.email);
+    const passwordError = validatePassword(data.password);
+
+    if (emailError || passwordError) {
+      setErrors({ email: emailError, password: passwordError });
       return;
     }
 
@@ -90,7 +122,12 @@ const LoginScreen: React.FC = () => {
   };
 
   return (
+
     <View style={styles.container}>
+      <LinearGradient
+        colors={["#fff", theme.primary_color]}
+        style={styles.gradientContainer}
+      ></LinearGradient>
       <View style={styles.welcome}>
         <Image source={images.eye3dModal} style={{ width: 200, height: 200 }} />
       </View>
@@ -101,7 +138,9 @@ const LoginScreen: React.FC = () => {
           onChangeText={(value) => setData({ ...data, email: value })}
           placeholder="Enter your email"
           beforeIcon="email"
+          onBlur={handleBlurEmail}
         />
+        {errors.email ? <Text style={styles.errorText}>{errors.email}</Text> : null}
       </View>
       <View style={styles.inputView}>
         <Input
@@ -112,11 +151,11 @@ const LoginScreen: React.FC = () => {
           beforeIcon="password"
           afterIcon="eye"
           toggleSecureTextEntry={toggleSecureTextEntry}
+          onBlur={handleBlurPassword}
         />
+        {errors.password ? <Text style={styles.errorText}>{errors.password}</Text> : null}
       </View>
-      <TouchableOpacity onPress={handleForgotPassword} style={styles.forgotContainer}>
-        <Text style={styles.forgot}>Forgot Password?</Text>
-      </TouchableOpacity>
+      <Text></Text>
       <PrimaryButton
         text={loading ? "Logging in..." : "Login"}
         isLoading={loading}
@@ -130,17 +169,7 @@ const LoginScreen: React.FC = () => {
           <Text style={styles.signUpLink}>Sign Up</Text>
         </TouchableOpacity>
       </View>
-      <View>
-        <Text style={styles.or}>OR</Text>
-      </View>
-      <IconButton
-        text="Login with Google"
-        backgroundColor="white"
-        icon="google"
-        textColor="black"
-        onClick={handleGoogleLogin}
-        width={null}
-      />
+
 
       <Modal isVisible={modalVisible} onBackdropPress={() => setModalVisible(false)} animationIn="zoomIn" animationOut="zoomOut">
         <View style={styles.modalContent}>
@@ -156,6 +185,11 @@ const LoginScreen: React.FC = () => {
 };
 
 const styles = StyleSheet.create({
+  gradientContainer: {
+    position: "absolute",
+    width: "100%",
+    height: "100%",
+  },
   container: {
     flex: 1,
     alignItems: "center",
@@ -189,14 +223,20 @@ const styles = StyleSheet.create({
     marginBottom: 20,
   },
   signUpLink: {
-    color: theme.primary_color,
+    color: "blue",
     marginLeft: 5,
+    textDecorationLine: "underline",
   },
   or: {
     color: "#a0a7b0",
     marginTop: 10,
     marginBottom: 10,
     fontSize: 12,
+  },
+  errorText: {
+    color: "red",
+    fontSize: 12,
+    marginTop: 5,
   },
   modalContent: {
     backgroundColor: "white",
